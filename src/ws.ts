@@ -1,6 +1,6 @@
 import { createMemo, createSignal } from 'solid-js'
 import { LinearBackoff, WebsocketBuilder } from 'websocket-ts'
-import { PlayerAction } from './action'
+import { BoardAction, PlayerAction } from './action'
 import { GameState, serverMsg } from './zod'
 
 interface Cxn {
@@ -34,11 +34,11 @@ export function createWs(init?: Cxn) {
     .build()
 
   const options = {
-    communists: false,
-    monarchist: false,
-    anarchist: false,
-    capitalist: false,
-    centrists: false,
+    communists: true,
+    monarchist: true,
+    anarchist: true,
+    capitalist: true,
+    centrists: true,
   }
 
   const join = (cxn: Cxn) => {
@@ -54,6 +54,8 @@ export function createWs(init?: Cxn) {
     joinAsBoard: (gameId: string) => join({ gameId, name: null }),
     joinAsPlayer: (gameId: string, name: string) => join({ gameId, name }),
     startGame: () => ws.send(JSON.stringify('StartGame')),
+    boardAction: (action: BoardAction) =>
+      ws.send(JSON.stringify({ BoardAction: action })),
     playerAction: (action: PlayerAction) =>
       ws.send(JSON.stringify({ PlayerAction: action })),
   }

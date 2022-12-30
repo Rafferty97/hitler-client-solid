@@ -7,6 +7,7 @@ export type PlayerAction =
         | 'VetoAgenda'
         | 'AcceptVeto'
         | 'RejectVeto'
+        | 'StartAssassination'
     }
   | {
       type: 'ChoosePlayer'
@@ -20,3 +21,12 @@ export type PlayerAction =
       type: 'Discard'
       index: number
     }
+
+export type BoardAction = {
+  type:
+    | 'EndVoting'
+    | 'EndCardReveal'
+    | 'EndExecutiveAction'
+    | 'EndLegislativeSession'
+    | 'EndAssassination'
+}
