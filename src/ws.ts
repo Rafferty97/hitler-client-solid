@@ -21,7 +21,7 @@ export function createWs(init?: Cxn) {
   })
 
   const ws = new WebsocketBuilder('ws://localhost:8888')
-    .withBackoff(new LinearBackoff(1000, 250, 3000))
+    .withBackoff(new LinearBackoff(1000, 250, 2500))
     .onOpen((ws) => {
       setConnected(true)
       const msg = connectionMessage(cxn())
@@ -36,10 +36,10 @@ export function createWs(init?: Cxn) {
 
   const options = {
     communists: true,
-    monarchist: true,
+    monarchist: false,
     anarchist: false,
-    capitalist: true,
-    centrists: true,
+    capitalist: false,
+    centrists: false,
   }
 
   const join = (cxn: Cxn) => {

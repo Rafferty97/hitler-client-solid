@@ -8,6 +8,7 @@ export type PlayerAction =
         | 'AcceptVeto'
         | 'RejectVeto'
         | 'StartAssassination'
+        | 'EndCongress'
     }
   | {
       type: 'ChoosePlayer'

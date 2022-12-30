@@ -56,8 +56,8 @@ const policyPeakPrompt = z.object({
 })
 
 const radicalisationResultPrompt = z.object({
-  type: z.literal('RadicalisationResult'),
-  success: z.boolean().nullable(),
+  type: z.literal('Radicalisation'),
+  result: z.enum(['NoAttempt', 'Fail', 'Success', 'Unchanged', 'Radicalised']),
 })
 
 const deadPrompt = z.object({ type: z.literal('Dead') })

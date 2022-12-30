@@ -10,12 +10,18 @@ const App: Component = () => {
   const init = gameId.match(/[A-Z]{4}/) ? { gameId, name: null } : undefined
   const ws = createWs(init)
 
-  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'ED', 'FRED'].map(
-    (name) => ({
-      name,
-      ws: createWs(),
-    })
-  )
+  const players = [
+    'ALEX',
+    'BOB',
+    'CHARLIE',
+    'DAVID',
+    'ED',
+    'FRED',
+    'GEORGE',
+  ].map((name) => ({
+    name,
+    ws: createWs(),
+  }))
   createEffect(() => {
     const gameId = ws.gameId()
     if (!gameId) return
@@ -339,9 +345,7 @@ const PlayerPrompt: Component<{
           {(state) => (
             <>
               <h4>Radicalisation Result</h4>
-              {state.success != null && (
-                <p>{state.success ? 'Success!' : 'Failure!'}</p>
-              )}
+              <p>{state.result}</p>
               <button
                 onClick={() => props.action({ type: 'EndExecutiveAction' })}
               >
@@ -357,6 +361,12 @@ const PlayerPrompt: Component<{
               <p>{state.outcome}</p>
             </>
           )}
+        </Match>
+        <Match when={player()?.prompt?.type === 'EndCongress'}>
+          <h4>Congress</h4>
+          <button onClick={() => props.action({ type: 'EndCongress' })}>
+            DONE
+          </button>
         </Match>
         <Match when={player()?.prompt != null}>
           <p>UNKNOWN PROMPT: {player()?.prompt?.type}</p>
@@ -427,9 +437,7 @@ function isInvestigatePlayer(state?: PlayerState) {
 }
 
 function isRadicalisationResult(state?: PlayerState) {
-  return state?.prompt?.type === 'RadicalisationResult'
-    ? state.prompt
-    : undefined
+  return state?.prompt?.type === 'Radicalisation' ? state.prompt : undefined
 }
 
 function isGameOver(state?: BoardState | PlayerState) {
