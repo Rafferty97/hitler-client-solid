@@ -1,7 +1,8 @@
 import { createMemo, createSignal } from 'solid-js'
 import { LinearBackoff, WebsocketBuilder } from 'websocket-ts'
+import { z } from 'zod'
 import { BoardAction, PlayerAction } from './action'
-import { GameState, serverMsg } from './zod'
+import { gameState, GameState } from './dm/state'
 
 interface Cxn {
   gameId: string
@@ -36,7 +37,7 @@ export function createWs(init?: Cxn) {
   const options = {
     communists: true,
     monarchist: true,
-    anarchist: true,
+    anarchist: false,
     capitalist: true,
     centrists: true,
   }
@@ -80,3 +81,14 @@ function connectionMessage(id: Cxn | undefined): string | undefined {
     },
   })
 }
+
+const serverMsg = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('update'),
+    state: gameState,
+  }),
+  z.object({
+    type: z.literal('error'),
+    error: z.string(),
+  }),
+])

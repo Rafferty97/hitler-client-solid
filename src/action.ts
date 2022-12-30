@@ -29,4 +29,6 @@ export type BoardAction = {
     | 'EndExecutiveAction'
     | 'EndLegislativeSession'
     | 'EndAssassination'
+    | 'EndCommunistStart'
+    | 'EndCommunistEnd'
 }

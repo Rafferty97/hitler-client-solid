@@ -2,7 +2,7 @@ import { Component, createEffect, Match, Switch } from 'solid-js'
 import { BoardAction, PlayerAction } from './action'
 import styles from './App.module.css'
 import { createWs } from './ws'
-import { BoardState, GameState, PlayerState } from './zod'
+import { BoardState, GameState, PlayerState } from './dm/state'
 
 const App: Component = () => {
   const urlParams = new URLSearchParams(window.location.search)
@@ -40,7 +40,7 @@ const App: Component = () => {
           <div
             style={{
               width: '320px',
-              height: '500px',
+              height: '320px',
               border: '1px solid black',
             }}
           >
@@ -87,6 +87,9 @@ const BoardPrompt: Component<{
         <span style={{ display: 'inline-block', width: '50px' }}></span>
         <strong>Communists: </strong>
         {board()?.communist_cards ?? '--'}
+        <span style={{ display: 'inline-block', width: '50px' }}></span>
+        <strong>Deck: </strong>
+        {board()?.draw_pile ?? '--'}
       </p>
       <hr />
       <Switch>
@@ -143,6 +146,27 @@ const BoardPrompt: Component<{
             </>
           )}
         </Match>
+        <Match when={isCommunistSession(board())} keyed>
+          {(state) => (
+            <>
+              <h2>{state.action}</h2>
+              {state.phase === 'Entering' && (
+                <button
+                  onClick={() => props.action({ type: 'EndCommunistStart' })}
+                >
+                  NEXT
+                </button>
+              )}
+              {state.phase === 'Leaving' && (
+                <button
+                  onClick={() => props.action({ type: 'EndCommunistEnd' })}
+                >
+                  NEXT
+                </button>
+              )}
+            </>
+          )}
+        </Match>
         <Match when={isExecution(board())} keyed>
           {(state) => (
             <>
@@ -174,6 +198,15 @@ const BoardPrompt: Component<{
             </>
           )}
         </Match>
+        <Match when={board()?.prompt?.type === 'PolicyPeak'}>
+          <h2>Policy Peak</h2>
+        </Match>
+        <Match when={board()?.prompt?.type === 'FiveYearPlan'}>
+          <h2>Five Year Plan</h2>
+          <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>
+            NEXT
+          </button>
+        </Match>
         <Match when={isGameOver(board())} keyed>
           {(state) => (
             <>
@@ -181,9 +214,6 @@ const BoardPrompt: Component<{
               <p>{state.outcome}</p>
             </>
           )}
-        </Match>
-        <Match when={board()?.prompt?.type === 'PolicyPeak'}>
-          <h2>Policy Peak</h2>
         </Match>
         <Match when={board()?.prompt != null}>
           <p>UNKNOWN PROMPT: {board()?.prompt?.type}</p>
@@ -290,6 +320,36 @@ const PlayerPrompt: Component<{
         <Match when={player()?.prompt?.type === 'Dead'} keyed>
           <p style={{ color: '#b44', 'font-weight': 'bold' }}>You are dead</p>
         </Match>
+        <Match when={isInvestigatePlayer(player())} keyed>
+          {(state) => (
+            <>
+              <p>Investigate Player</p>
+              <p>
+                {state.name} is a {state.party}
+              </p>
+              <button
+                onClick={() => props.action({ type: 'EndExecutiveAction' })}
+              >
+                OKAY
+              </button>
+            </>
+          )}
+        </Match>
+        <Match when={isRadicalisationResult(player())} keyed>
+          {(state) => (
+            <>
+              <h4>Radicalisation Result</h4>
+              {state.success != null && (
+                <p>{state.success ? 'Success!' : 'Failure!'}</p>
+              )}
+              <button
+                onClick={() => props.action({ type: 'EndExecutiveAction' })}
+              >
+                OKAY
+              </button>
+            </>
+          )}
+        </Match>
         <Match when={isGameOver(player())} keyed>
           {(state) => (
             <>
@@ -328,6 +388,10 @@ function isCardReveal(state?: BoardState) {
   return state?.prompt?.type === 'CardReveal' ? state.prompt : undefined
 }
 
+function isCommunistSession(state?: BoardState) {
+  return state?.prompt?.type === 'CommunistSession' ? state.prompt : undefined
+}
+
 function isExecution(state?: BoardState) {
   return state?.prompt?.type === 'Execution' ? state.prompt : undefined
 }
@@ -356,6 +420,16 @@ function isStartElection(state?: PlayerState) {
 
 function isPolicyPeak(state?: PlayerState) {
   return state?.prompt?.type === 'PolicyPeak' ? state.prompt : undefined
+}
+
+function isInvestigatePlayer(state?: PlayerState) {
+  return state?.prompt?.type === 'InvestigatePlayer' ? state.prompt : undefined
+}
+
+function isRadicalisationResult(state?: PlayerState) {
+  return state?.prompt?.type === 'RadicalisationResult'
+    ? state.prompt
+    : undefined
 }
 
 function isGameOver(state?: BoardState | PlayerState) {
