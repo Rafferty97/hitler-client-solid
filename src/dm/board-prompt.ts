@@ -38,6 +38,18 @@ const executionPrompt = z.object({
   chosen_player: nonzeroInt().nullable(),
 })
 
+const investigatePlayerPrompt = z.object({
+  type: z.literal('InvestigatePlayer'),
+  chosen_player: nonzeroInt().nullable(),
+})
+
+const specialElectionPrompt = z.object({
+  type: z.literal('SpecialElection'),
+  can_hijack: z.boolean(),
+  hijacked_by: nonzeroInt().nullable(),
+  chosen_player: nonzeroInt().nullable(),
+})
+
 const assassinationPrompt = z.object({
   type: z.literal('Assassination'),
   anarchist: nonzeroInt(),
@@ -53,6 +65,16 @@ const communistSessionPrompt = z.object({
 const policyPeakPrompt = z.object({ type: z.literal('PolicyPeak') })
 
 const fiveYearPlanPrompt = z.object({ type: z.literal('FiveYearPlan') })
+
+const monarchistElectionPrompt = z.object({
+  type: z.literal('MonarchistElection'),
+  monarchist: nonzeroInt(),
+  president: nonzeroInt(),
+  monarchist_chancellor: nonzeroInt().nullable(),
+  president_chancellor: nonzeroInt().nullable(),
+  votes: z.array(z.boolean().nullable()),
+  outcome: z.boolean().nullable(),
+})
 
 const gameOverPrompt = z.object({
   type: z.literal('GameOver'),
@@ -72,9 +94,12 @@ export const boardPrompt = z.discriminatedUnion('type', [
   legislativeSessionPrompt,
   cardRevealPrompt,
   executionPrompt,
+  investigatePlayerPrompt,
+  specialElectionPrompt,
   assassinationPrompt,
   communistSessionPrompt,
   policyPeakPrompt,
   fiveYearPlanPrompt,
+  monarchistElectionPrompt,
   gameOverPrompt,
 ])

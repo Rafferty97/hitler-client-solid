@@ -9,6 +9,7 @@ export type PlayerAction =
         | 'RejectVeto'
         | 'StartAssassination'
         | 'EndCongress'
+        | 'HijackElection'
     }
   | {
       type: 'ChoosePlayer'
@@ -32,4 +33,5 @@ export type BoardAction = {
     | 'EndAssassination'
     | 'EndCommunistStart'
     | 'EndCommunistEnd'
+    | 'StartSpecialElection'
 }

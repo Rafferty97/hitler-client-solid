@@ -60,6 +60,8 @@ const radicalisationResultPrompt = z.object({
   result: z.enum(['NoAttempt', 'Fail', 'Success', 'Unchanged', 'Radicalised']),
 })
 
+const hijackElectionPrompt = z.object({ type: z.literal('HijackElection') })
+
 const deadPrompt = z.object({ type: z.literal('Dead') })
 
 const gameOverPrompt = z.object({
@@ -79,6 +81,7 @@ export const playerPrompt = z.discriminatedUnion('type', [
   investigatePlayerPrompt,
   policyPeakPrompt,
   radicalisationResultPrompt,
+  hijackElectionPrompt,
   deadPrompt,
   gameOverPrompt,
 ])

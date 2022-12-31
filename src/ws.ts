@@ -4,9 +4,17 @@ import { z } from 'zod'
 import { BoardAction, PlayerAction } from './action'
 import { gameState, GameState } from './dm/state'
 
-interface Cxn {
+export interface Cxn {
   gameId: string
   name: string | null
+}
+
+export interface GameOptions {
+  communists: boolean
+  monarchist: boolean
+  anarchist: boolean
+  capitalist: boolean
+  centrists: boolean
 }
 
 export function createWs(init?: Cxn) {
@@ -28,19 +36,15 @@ export function createWs(init?: Cxn) {
       if (msg) ws.send(msg)
     })
     .onMessage((ws, event) => {
-      const msg = serverMsg.parse(JSON.parse(event.data))
-      if (msg.type === 'update') setState(msg.state)
+      const msg = serverMsg.safeParse(JSON.parse(event.data))
+      if (!msg.success) {
+        console.error(`Could not parse message`, JSON.parse(event.data))
+        return
+      }
+      if (msg.data.type === 'update') setState(msg.data.state)
     })
     .onClose(() => setConnected(false))
     .build()
-
-  const options = {
-    communists: true,
-    monarchist: false,
-    anarchist: false,
-    capitalist: false,
-    centrists: false,
-  }
 
   const join = (cxn: Cxn) => {
     setState(connectingState(cxn))
@@ -51,7 +55,8 @@ export function createWs(init?: Cxn) {
     connected,
     state,
     gameId: createMemo(() => state()?.game_id),
-    createGame: () => ws.send(JSON.stringify({ CreateGame: { options } })),
+    createGame: (options: GameOptions) =>
+      ws.send(JSON.stringify({ CreateGame: { options } })),
     joinAsBoard: (gameId: string) => join({ gameId, name: null }),
     joinAsPlayer: (gameId: string, name: string) => join({ gameId, name }),
     startGame: () => ws.send(JSON.stringify('StartGame')),
