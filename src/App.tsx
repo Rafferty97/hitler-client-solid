@@ -5,9 +5,8 @@ import { createWs, GameOptions } from './ws'
 import { BoardState, GameState, PlayerState } from './dm/state'
 
 /*
-  TODO: Special Election
   TODO: Cannot have game with *no* ordinary fascists
-  TODO: Anarchist
+  TODO: Anarchist, interaction with special election, etc.
 
   Centrist = 7 or more
   Monarchist (if you do it) = 8 or more
@@ -41,10 +40,10 @@ const App: Component = () => {
   })
 
   const options: GameOptions = {
-    communists: true,
-    monarchist: true,
+    communists: false,
+    monarchist: false,
     anarchist: false,
-    capitalist: true,
+    capitalist: false,
     centrists: false,
   }
 
@@ -152,6 +151,15 @@ const BoardPrompt: Component<{
               <p>
                 <strong>{state.phase}</strong>
               </p>
+              {state.phase === 'VetoApproved' && (
+                <button
+                  onClick={() =>
+                    props.action({ type: 'EndLegislativeSession' })
+                  }
+                >
+                  NEXT
+                </button>
+              )}
             </>
           )}
         </Match>
@@ -367,8 +375,21 @@ const PlayerPrompt: Component<{
                   {policy.toUpperCase()}
                 </button>
               ))}
+              {state.type === 'ChancellorDiscard' && state.can_veto && (
+                <button onClick={() => props.action({ type: 'VetoAgenda' })}>
+                  VETO
+                </button>
+              )}
             </>
           )}
+        </Match>
+        <Match when={player()?.prompt?.type === 'ApproveVeto'}>
+          <button onClick={() => props.action({ type: 'AcceptVeto' })}>
+            APPROVE
+          </button>
+          <button onClick={() => props.action({ type: 'RejectVeto' })}>
+            REJECT
+          </button>
         </Match>
         <Match when={isStartElection(player())} keyed>
           {state => (
