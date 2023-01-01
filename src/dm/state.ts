@@ -2,11 +2,12 @@ import { z } from 'zod'
 import { boardPrompt } from './board-prompt'
 import { playerPrompt } from './player-prompt'
 import { nonzeroInt } from './primative'
-import { role } from './role'
+import { party, role } from './role'
 
 export type GameState = z.infer<typeof gameState>
 export type PlayerState = z.infer<typeof playerState>
 export type BoardState = z.infer<typeof boardState>
+export type PublicPlayer = z.infer<typeof publicPlayer>
 
 const connectingState = z.object({ type: z.literal('connecting') })
 
@@ -32,23 +33,33 @@ const boardState = z.object({
   prompt: boardPrompt.nullable(),
 })
 
+const investigationResult = z.literal('Unknown').or(
+  z.object({
+    Role: role.optional(),
+    Party: party.optional(),
+  })
+)
+
 const playerState = z.object({
   type: z.literal('player'),
   name: z.string(),
   role: role,
+  others: z.array(investigationResult),
   prompt: playerPrompt.nullable(),
 })
 
 const endedState = z.object({ type: z.literal('ended') })
 
+const publicPlayer = z.object({
+  name: z.string(),
+  alive: z.boolean(),
+  not_hitler: z.boolean(),
+})
+
 export const gameState = z.object({
   game_id: z.string(),
   name: z.string().nullable(),
-  players: z.array(
-    z.object({
-      name: z.string(),
-    })
-  ),
+  players: z.array(publicPlayer.passthrough()),
   state: z.discriminatedUnion('type', [
     connectingState,
     lobbyState,

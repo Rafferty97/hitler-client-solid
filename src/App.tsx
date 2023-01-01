@@ -1,11 +1,13 @@
 import { Component, createEffect, Match, Switch } from 'solid-js'
-import { BoardAction, PlayerAction } from './action'
-import styles from './App.module.css'
-import { createWs, GameOptions } from './ws'
+import { useSearchParams } from '@solidjs/router'
+import { BoardAction, PlayerAction } from './dm/action'
 import { BoardState, GameState, PlayerState } from './dm/state'
+import { createWs, GameOptions } from './ws'
+import { PlayerApp } from './player/PlayerApp'
+import { validateGameId } from './validate'
+import styles from './App.module.css'
 
 /*
-  TODO: Cannot have game with *no* ordinary fascists
   TODO: Anarchist, interaction with special election, etc.
 
   Centrist = 7 or more
@@ -14,33 +16,39 @@ import { BoardState, GameState, PlayerState } from './dm/state'
 */
 
 const App: Component = () => {
-  const urlParams = new URLSearchParams(window.location.search)
-  const gameId = urlParams.get('game')?.toUpperCase() ?? ''
-  const init = gameId.match(/[A-Z]{4}/) ? { gameId, name: null } : undefined
-  const ws = createWs(init)
+  const [params, setParams] = useSearchParams()
+  const gameId = () => params.game ?? ''
+  const setGameId = (game: string) => setParams({ game })
+  const ws = createWs()
+
+  createEffect(() => {
+    const gameId_ = validateGameId(gameId())
+    if (gameId_) {
+      ws.joinAsBoard(gameId_)
+    } else {
+      ws.leave()
+    }
+  })
+
+  createEffect(() => {
+    const gameId_ = ws.gameId()
+    if (gameId_) setGameId(gameId_)
+  })
 
   const players = [
     'ALEX',
     'BOB',
     'CHARLIE',
     'DAVID',
-    'ED',
+    'EDDY',
     'FRED',
-    'GEORGE',
-    'IJ',
-  ].map(name => ({
-    name,
-    ws: createWs(),
-  }))
-  createEffect(() => {
-    const gameId = ws.gameId()
-    if (!gameId) return
-    window.history.replaceState({}, '', gameId ? `/?game=${gameId}` : '/')
-    players.forEach(p => p.ws.joinAsPlayer(gameId, p.name))
-  })
+    // 'GEORGE',
+    // 'IJ',
+    // 'JACK',
+  ]
 
   const options: GameOptions = {
-    communists: false,
+    communists: true,
     monarchist: false,
     anarchist: false,
     capitalist: false,
@@ -48,38 +56,39 @@ const App: Component = () => {
   }
 
   return (
-    <div class={styles.App}>
-      <h1>BOARD</h1>
-      {!ws.connected() && <p>DISCONNECTED...</p>}
-      <p>Game ID: {ws.gameId() ?? '-- none --'}</p>
-      <button onClick={() => ws.createGame(options)}>CREATE GAME</button>
-      {canStart(ws.state()) && (
-        <button onClick={() => ws.startGame()}>START GAME</button>
-      )}
-      <hr />
-      <BoardPrompt state={ws.state()} action={ws.boardAction} />
-      <hr />
-      <div style={{ display: 'flex' }}>
+    <div>
+      <div class={styles.App}>
+        {!ws.connected() && <p>DISCONNECTED...</p>}
+        <p>
+          Game ID:{' '}
+          <input
+            value={gameId()}
+            onInput={ev => setGameId((ev.target as HTMLInputElement).value)}
+            style={{ 'text-transform': 'uppercase' }}
+          />
+        </p>
+        <button onClick={() => ws.createGame(options)}>CREATE GAME</button>
+        {canStart(ws.state()) && (
+          <button onClick={() => ws.startGame()}>START GAME</button>
+        )}
+        <hr />
+        <BoardPrompt state={ws.state()} action={ws.boardAction} />
+      </div>
+      <div style={{ display: 'flex', 'flex-wrap': 'wrap', margin: '40px 0' }}>
         {players.map(player => (
           <div
             style={{
-              width: '320px',
-              height: '320px',
-              border: '1px solid black',
+              flex: '1 0 280px',
+              height: '520px',
+              border: '2px solid white',
+              background: '#222',
+              overflow: 'hidden',
             }}
           >
-            <h3>{player.name}</h3>
-            {!player.ws.connected() && <p>DISCONNECTED...</p>}
-            <PlayerPrompt
-              state={player.ws.state()}
-              action={player.ws.playerAction}
-            />
+            <PlayerApp name={player} gameId={gameId()} />
           </div>
         ))}
       </div>
-      <pre style={{ color: '#aaa', 'text-align': 'left' }}>
-        {JSON.stringify(ws.state(), undefined, 2)}
-      </pre>
     </div>
   )
 }

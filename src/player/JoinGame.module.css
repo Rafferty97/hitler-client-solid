@@ -1,0 +1,7 @@
+.JoinForm input[type="text"] {
+  padding: 8px;
+}
+
+.JoinForm input[type="submit"]:disabled {
+  opacity: 1;
+}

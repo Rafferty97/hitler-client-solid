@@ -1,0 +1,61 @@
+.CardSelector {
+  position: relative;
+  margin: 50px 0 0 0;
+  height: 260px;
+}
+
+.CardSelector .question-mark {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  margin-left: -50px;
+  width: 100px;
+  height: 100px;
+  color: #888;
+  font-size: 90px;
+  line-height: 100px;
+  text-align: center;
+  font-family: 'Germania One', sans-serif;
+}
+
+.PolicyCard {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -75px;
+  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.2);
+  width: 150px;
+  height: 224px;
+  background-size: 107% auto;
+  background-position: 50% 70%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+}
+
+.PolicyCard.Fascist {
+  background-image: url(../assets/fascist_article.png);
+}
+
+.PolicyCard.Communist {
+  background-image: url(../assets/communist_article.png);
+}
+
+.PolicyCard.Liberal {
+  background-image: url(../assets/liberal_article.png);
+}
+
+.Buttons {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+.Buttons button {
+  flex: 1 1 0;
+  margin-left: 15px;
+}
+
+.Buttons button:first-child {
+  margin-left: 0;
+}

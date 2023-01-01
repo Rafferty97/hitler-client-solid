@@ -1,0 +1,26 @@
+.PlayerApp {
+  color: white;
+}
+
+.Container {
+  width: 80%;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.Message {
+  margin: 30px 0;
+  text-align: center;
+  font-size: 15px;
+  text-transform: uppercase;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.Message.padded {
+  margin: 50px 0;
+}
+
+.Message strong {
+  font-weight: 800;
+  color: #ffaa33;
+}

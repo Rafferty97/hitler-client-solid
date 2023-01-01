@@ -1,10 +1,10 @@
 import { createMemo, createSignal } from 'solid-js'
 import { LinearBackoff, WebsocketBuilder } from 'websocket-ts'
 import { z } from 'zod'
-import { BoardAction, PlayerAction } from './action'
+import { BoardAction, PlayerAction } from './dm/action'
 import { gameState, GameState } from './dm/state'
 
-export interface Cxn {
+export interface Credentials {
   gameId: string
   name: string | null
 }
@@ -17,20 +17,18 @@ export interface GameOptions {
   centrists: boolean
 }
 
-export function createWs(init?: Cxn) {
+export function createWs() {
   const [connected, setConnected] = createSignal(false)
-  const [state, setState] = createSignal<GameState | undefined>(
-    connectingState(init)
-  )
+  const [state, setState] = createSignal<GameState | undefined>(undefined)
 
-  const cxn = createMemo<Cxn | undefined>(() => {
+  const cxn = createMemo<Credentials | undefined>(() => {
     const s = state()
     return s ? { gameId: s.game_id, name: s.name } : undefined
   })
 
   const ws = new WebsocketBuilder('ws://localhost:8888')
     .withBackoff(new LinearBackoff(1000, 250, 2500))
-    .onOpen((ws) => {
+    .onOpen(ws => {
       setConnected(true)
       const msg = connectionMessage(cxn())
       if (msg) ws.send(msg)
@@ -42,11 +40,17 @@ export function createWs(init?: Cxn) {
         return
       }
       if (msg.data.type === 'update') setState(msg.data.state)
+      if (msg.data.type === 'error') {
+        if (msg.data.error === 'game does not exist') {
+          const gameId = cxn()?.gameId
+          setState(gameId ? endedState(gameId) : undefined)
+        }
+      }
     })
     .onClose(() => setConnected(false))
     .build()
 
-  const join = (cxn: Cxn) => {
+  const join = (cxn: Credentials) => {
     setState(connectingState(cxn))
     ws.send(connectionMessage(cxn)!)
   }
@@ -59,6 +63,10 @@ export function createWs(init?: Cxn) {
       ws.send(JSON.stringify({ CreateGame: { options } })),
     joinAsBoard: (gameId: string) => join({ gameId, name: null }),
     joinAsPlayer: (gameId: string, name: string) => join({ gameId, name }),
+    leave: () => {
+      setState(undefined)
+      ws.send(JSON.stringify('LeaveGame'))
+    },
     startGame: () => ws.send(JSON.stringify('StartGame')),
     boardAction: (action: BoardAction) =>
       ws.send(JSON.stringify({ BoardAction: action })),
@@ -67,7 +75,7 @@ export function createWs(init?: Cxn) {
   }
 }
 
-function connectingState(id: Cxn | undefined): GameState | undefined {
+function connectingState(id: Credentials | undefined): GameState | undefined {
   if (!id) return undefined
   return {
     game_id: id.gameId,
@@ -77,7 +85,16 @@ function connectingState(id: Cxn | undefined): GameState | undefined {
   }
 }
 
-function connectionMessage(id: Cxn | undefined): string | undefined {
+function endedState(gameId: string): GameState {
+  return {
+    game_id: gameId,
+    name: null,
+    players: [],
+    state: { type: 'ended' },
+  }
+}
+
+function connectionMessage(id: Credentials | undefined): string | undefined {
   if (!id) return
   return JSON.stringify({
     [id.name ? 'JoinAsPlayer' : 'JoinAsBoard']: {

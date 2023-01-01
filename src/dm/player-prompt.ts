@@ -2,6 +2,9 @@ import { z } from 'zod'
 import { gameOutcome } from './game-outcome'
 import { party } from './role'
 
+export type PlayerPrompt = z.infer<typeof playerPrompt>
+export type ChoosePlayerPrompt = z.infer<typeof choosePlayerPrompt>
+
 const nightPrompt = z.object({ type: z.literal('Night') })
 
 const choosePlayerPrompt = z.object({
