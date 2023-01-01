@@ -16,11 +16,17 @@
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
+.Message.dead {
+  color: #d44;
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .Message.padded {
   margin: 50px 0;
 }
 
 .Message strong {
-  font-weight: 800;
+  font-weight: bold;
   color: #ffaa33;
 }

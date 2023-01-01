@@ -41,14 +41,14 @@ const App: Component = () => {
     'CHARLIE',
     'DAVID',
     'EDDY',
-    'FRED',
+    // 'FRED',
     // 'GEORGE',
     // 'IJ',
     // 'JACK',
   ]
 
   const options: GameOptions = {
-    communists: true,
+    communists: false,
     monarchist: false,
     anarchist: false,
     capitalist: false,
@@ -68,9 +68,7 @@ const App: Component = () => {
           />
         </p>
         <button onClick={() => ws.createGame(options)}>CREATE GAME</button>
-        {canStart(ws.state()) && (
-          <button onClick={() => ws.startGame()}>START GAME</button>
-        )}
+        {canStart(ws.state()) && <button onClick={() => ws.startGame()}>START GAME</button>}
         <hr />
         <BoardPrompt state={ws.state()} action={ws.boardAction} />
       </div>
@@ -106,8 +104,7 @@ const BoardPrompt: Component<{
     return state?.type === 'board' ? state : undefined
   }
 
-  const playerName = (idx: number | null) =>
-    idx == null ? '--' : players()[idx].name
+  const playerName = (idx: number | null) => (idx == null ? '--' : players()[idx].name)
 
   return (
     <>
@@ -134,19 +131,10 @@ const BoardPrompt: Component<{
             <>
               <h2>Election</h2>
               <p>President: {playerName(state.president)}</p>
-              <p>
-                Chancellor:{' '}
-                {state.chancellor == null
-                  ? '-- none --'
-                  : playerName(state.chancellor)}
-              </p>
+              <p>Chancellor: {state.chancellor == null ? '-- none --' : playerName(state.chancellor)}</p>
+              {state.outcome != null && <p>Outcome: {state.outcome ? 'JA!' : 'NEIN!'}</p>}
               {state.outcome != null && (
-                <p>Outcome: {state.outcome ? 'JA!' : 'NEIN!'}</p>
-              )}
-              {state.outcome != null && (
-                <button onClick={() => props.action({ type: 'EndVoting' })}>
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'EndVoting' })}>NEXT</button>
               )}
             </>
           )}
@@ -161,13 +149,7 @@ const BoardPrompt: Component<{
                 <strong>{state.phase}</strong>
               </p>
               {state.phase === 'VetoApproved' && (
-                <button
-                  onClick={() =>
-                    props.action({ type: 'EndLegislativeSession' })
-                  }
-                >
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'EndLegislativeSession' })}>NEXT</button>
               )}
             </>
           )}
@@ -180,11 +162,7 @@ const BoardPrompt: Component<{
                 Outcome: {state.result}
                 {state.chaos ? ' (chaos)' : ''}
               </p>
-              {state.can_end && (
-                <button onClick={() => props.action({ type: 'EndCardReveal' })}>
-                  NEXT
-                </button>
-              )}
+              {state.can_end && <button onClick={() => props.action({ type: 'EndCardReveal' })}>NEXT</button>}
             </>
           )}
         </Match>
@@ -193,18 +171,10 @@ const BoardPrompt: Component<{
             <>
               <h2>{state.action}</h2>
               {state.phase === 'Entering' && (
-                <button
-                  onClick={() => props.action({ type: 'EndCommunistStart' })}
-                >
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'EndCommunistStart' })}>NEXT</button>
               )}
               {state.phase === 'Leaving' && (
-                <button
-                  onClick={() => props.action({ type: 'EndCommunistEnd' })}
-                >
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'EndCommunistEnd' })}>NEXT</button>
               )}
             </>
           )}
@@ -215,11 +185,7 @@ const BoardPrompt: Component<{
               <h2>Execution</h2>
               <p>Player: {playerName(state.chosen_player)}</p>
               {state.chosen_player == null || (
-                <button
-                  onClick={() => props.action({ type: 'EndExecutiveAction' })}
-                >
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>NEXT</button>
               )}
             </>
           )}
@@ -237,24 +203,12 @@ const BoardPrompt: Component<{
             <>
               <h2>Special Election</h2>
               <p>Player: {playerName(state.chosen_player)}</p>
-              {state.hijacked_by && (
-                <p>
-                  Hijacked by the Monarchist: {playerName(state.hijacked_by)}
-                </p>
-              )}
+              {state.hijacked_by && <p>Hijacked by the Monarchist: {playerName(state.hijacked_by)}</p>}
               {(state.can_hijack || state.hijacked_by) && (
-                <button
-                  onClick={() => props.action({ type: 'StartSpecialElection' })}
-                >
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'StartSpecialElection' })}>NEXT</button>
               )}
               {state.chosen_player == null || (
-                <button
-                  onClick={() => props.action({ type: 'EndExecutiveAction' })}
-                >
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>NEXT</button>
               )}
             </>
           )}
@@ -271,15 +225,9 @@ const BoardPrompt: Component<{
                 <>
                   <p>
                     Outcome:{' '}
-                    {playerName(
-                      state.outcome
-                        ? state.monarchist_chancellor
-                        : state.president_chancellor
-                    )}
+                    {playerName(state.outcome ? state.monarchist_chancellor : state.president_chancellor)}
                   </p>
-                  <button onClick={() => props.action({ type: 'EndVoting' })}>
-                    NEXT
-                  </button>
+                  <button onClick={() => props.action({ type: 'EndVoting' })}>NEXT</button>
                 </>
               )}
             </>
@@ -292,11 +240,7 @@ const BoardPrompt: Component<{
               <p>Anarchist: {playerName(state.anarchist)}</p>
               <p>Player: {playerName(state.chosen_player)}</p>
               {state.chosen_player == null || (
-                <button
-                  onClick={() => props.action({ type: 'EndAssassination' })}
-                >
-                  NEXT
-                </button>
+                <button onClick={() => props.action({ type: 'EndAssassination' })}>NEXT</button>
               )}
             </>
           )}
@@ -306,9 +250,7 @@ const BoardPrompt: Component<{
         </Match>
         <Match when={board()?.prompt?.type === 'FiveYearPlan'}>
           <h2>Five Year Plan</h2>
-          <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>
-            NEXT
-          </button>
+          <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>NEXT</button>
         </Match>
         <Match when={isGameOver(board())} keyed>
           {state => (
@@ -339,102 +281,9 @@ const PlayerPrompt: Component<{
     <>
       <p style={{ 'margin-top': '-15px' }}>{player()?.role}</p>
       <Switch>
-        <Match when={player()?.prompt?.type === 'Night'}>
-          <p>Night round</p>
-          <button onClick={() => props.action({ type: 'EndNightRound' })}>
-            Okay
-          </button>
-        </Match>
-        <Match when={isChoosePlayer(player())} keyed>
-          {state => (
-            <>
-              <p>Choose a player</p>
-              <p>{state.kind}</p>
-              {state.options.map(name => (
-                <button
-                  onClick={() => props.action({ type: 'ChoosePlayer', name })}
-                >
-                  {name}
-                </button>
-              ))}
-            </>
-          )}
-        </Match>
-        <Match when={player()?.prompt?.type === 'Vote'}>
-          <p>Vote</p>
-          <button
-            onClick={() => props.action({ type: 'CastVote', vote: true })}
-          >
-            JA!
-          </button>
-          <button
-            onClick={() => props.action({ type: 'CastVote', vote: false })}
-          >
-            NEIN!
-          </button>
-        </Match>
-        <Match when={isDiscard(player())} keyed>
-          {state => (
-            <>
-              <p>Discard a policy:</p>
-              {state.cards.map((policy, index) => (
-                <button
-                  onClick={() => props.action({ type: 'Discard', index })}
-                >
-                  {policy.toUpperCase()}
-                </button>
-              ))}
-              {state.type === 'ChancellorDiscard' && state.can_veto && (
-                <button onClick={() => props.action({ type: 'VetoAgenda' })}>
-                  VETO
-                </button>
-              )}
-            </>
-          )}
-        </Match>
         <Match when={player()?.prompt?.type === 'ApproveVeto'}>
-          <button onClick={() => props.action({ type: 'AcceptVeto' })}>
-            APPROVE
-          </button>
-          <button onClick={() => props.action({ type: 'RejectVeto' })}>
-            REJECT
-          </button>
-        </Match>
-        <Match when={isStartElection(player())} keyed>
-          {state => (
-            <>
-              <button onClick={() => props.action({ type: 'EndCardReveal' })}>
-                DONE
-              </button>
-              {state.can_assassinate && (
-                <button
-                  onClick={() => props.action({ type: 'StartAssassination' })}
-                >
-                  ASSASSINATE
-                </button>
-              )}
-            </>
-          )}
-        </Match>
-        <Match when={isPolicyPeak(player())} keyed>
-          {state => (
-            <>
-              <p>Policy Peak</p>
-              <ul>
-                {state.cards.map(policy => (
-                  <li>{policy}</li>
-                ))}
-              </ul>
-              <button
-                onClick={() => props.action({ type: 'EndExecutiveAction' })}
-              >
-                OKAY
-              </button>
-            </>
-          )}
-        </Match>
-        <Match when={player()?.prompt?.type === 'Dead'} keyed>
-          <p style={{ color: '#b44', 'font-weight': 'bold' }}>You are dead</p>
+          <button onClick={() => props.action({ type: 'AcceptVeto' })}>APPROVE</button>
+          <button onClick={() => props.action({ type: 'RejectVeto' })}>REJECT</button>
         </Match>
         <Match when={isInvestigatePlayer(player())} keyed>
           {state => (
@@ -443,11 +292,7 @@ const PlayerPrompt: Component<{
               <p>
                 {state.name} is a {state.party}
               </p>
-              <button
-                onClick={() => props.action({ type: 'EndExecutiveAction' })}
-              >
-                OKAY
-              </button>
+              <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>OKAY</button>
             </>
           )}
         </Match>
@@ -456,25 +301,17 @@ const PlayerPrompt: Component<{
             <>
               <h4>Radicalisation Result</h4>
               <p>{state.result}</p>
-              <button
-                onClick={() => props.action({ type: 'EndExecutiveAction' })}
-              >
-                OKAY
-              </button>
+              <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>OKAY</button>
             </>
           )}
         </Match>
         <Match when={player()?.prompt?.type === 'HijackElection'}>
           <h4>Hijack election?</h4>
-          <button onClick={() => props.action({ type: 'HijackElection' })}>
-            HIJACK
-          </button>
+          <button onClick={() => props.action({ type: 'HijackElection' })}>HIJACK</button>
         </Match>
         <Match when={player()?.prompt?.type === 'EndCongress'}>
           <h4>Congress</h4>
-          <button onClick={() => props.action({ type: 'EndCongress' })}>
-            DONE
-          </button>
+          <button onClick={() => props.action({ type: 'EndCongress' })}>DONE</button>
         </Match>
         <Match when={isGameOver(player())} keyed>
           {state => (
@@ -544,10 +381,7 @@ function isChoosePlayer(state?: PlayerState) {
 
 function isDiscard(state?: PlayerState) {
   const prompt = state?.prompt
-  if (
-    prompt?.type === 'PresidentDiscard' ||
-    prompt?.type === 'ChancellorDiscard'
-  ) {
+  if (prompt?.type === 'PresidentDiscard' || prompt?.type === 'ChancellorDiscard') {
     return prompt
   }
 }

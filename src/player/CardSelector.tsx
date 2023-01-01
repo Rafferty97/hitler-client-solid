@@ -5,26 +5,20 @@ import { Button } from './Button'
 import ps from './PlayerApp.module.css'
 import s from './CardSelector.module.css'
 
-const NO_CARD = 99
-
-interface Props {
+interface CardSelectorProps {
   policies: Party[]
-  veto: boolean
+  canVeto: boolean
   onChoose: (index: number) => void
   onVeto: () => void
 }
 
-export const CardSelector: Component<Props> = props => {
-  const [discarded, setDiscarded] = createSignal(NO_CARD)
-  const scale = () =>
-    [0, 0, 1.2, 1][props.policies.length - (discarded() == NO_CARD ? 0 : 1)]
-  const offset = () =>
-    [0, 0, -0.6, -1][props.policies.length - (discarded() == NO_CARD ? 0 : 1)]
+export const CardSelector: Component<CardSelectorProps> = props => {
+  const [discarded, setDiscarded] = createSignal<number>()
 
   return (
     <>
       <p class={ps.Message}>
-        {discarded() == NO_CARD ? (
+        {discarded() == null ? (
           <>
             Choose a policy to <strong>discard</strong>
           </>
@@ -34,61 +28,84 @@ export const CardSelector: Component<Props> = props => {
           'Play this policy?'
         )}
       </p>
-      <div class={s.CardSelector}>
-        <Index each={props.policies}>
-          {(policy, idx) => (
-            <CardSelectorCard
-              policy={policy()}
-              n={scale() * (idx - (idx > discarded() ? 1 : 0)) + offset()}
-              hidden={idx === discarded()}
-              choose={() => setDiscarded(p => (p == NO_CARD ? idx : p))}
-            />
-          )}
-        </Index>
-      </div>
+      <CardSet
+        policies={props.policies}
+        discarded={discarded()}
+        onClick={idx => setDiscarded(i => (i == null ? idx : i))}
+      />
       <div class={s.Buttons}>
         <Switch>
-          <Match when={discarded() != NO_CARD}>
-            <Button
-              black
-              noPadding
-              label="undo"
-              onClick={() => setDiscarded(NO_CARD)}
-            />
-            <Button
-              yellow
-              noPadding
-              label="confirm"
-              onClick={() => props.onChoose(discarded())}
-            />
+          <Match when={discarded() == null && props.canVeto}>
+            <div class={s.CentreButton}>
+              <Button red noPadding label="Veto agenda" onClick={props.onVeto} />
+            </div>
+          </Match>
+          <Match when={discarded() != null}>
+            <Button black noPadding label="Undo" onClick={() => setDiscarded(undefined)} />
+            <Button yellow noPadding label="Confirm" onClick={() => props.onChoose(discarded()!)} />
           </Match>
         </Switch>
       </div>
-      {/* <div className="undo-confirm">
-        {discarded == 10 ? (
-          props.veto && (
-            <button
-              className="btn veto"
-              onClick={() => props.send({ type: 'veto' })}
-            >
-              Veto Agenda
-            </button>
-          )
-        ) : (
-          <>
-            <button className="btn undo" onClick={() => setDiscarded(10)}>
-              Undo
-            </button>
-            <button
-              className="btn confirm"
-              onClick={() => props.send({ type: 'discard', idx: discarded })}
-            >
-              Confirm
-            </button>
-          </>
-        )}
-      </div> */}
     </>
+  )
+}
+
+interface PolicyPeakProps {
+  policies: Party[]
+  onDone: () => void
+}
+
+export const PolicyPeak: Component<PolicyPeakProps> = props => {
+  const [revealed, setRevealed] = createSignal(false)
+
+  return (
+    <>
+      <p class={ps.Message}>
+        Click to reveal the
+        <br />
+        <strong>top three policy cards</strong>
+      </p>
+      <div class={s.QuestionMark}>?</div>
+      <CardSet policies={revealed() ? props.policies : []} />
+      <div class={s.Buttons}>
+        <div class={s.CentreButton}>
+          <Switch>
+            <Match when={revealed()}>
+              <Button yellow noPadding label="Done" onClick={props.onDone} />
+            </Match>
+            <Match when={!revealed()}>
+              <Button red noPadding label="Reveal cards" onClick={() => setRevealed(true)} />
+            </Match>
+          </Switch>
+        </div>
+      </div>
+    </>
+  )
+}
+
+interface CardSetProps {
+  policies: Party[]
+  discarded?: number
+  onClick?: (index: number) => void
+}
+
+const CardSet: Component<CardSetProps> = props => {
+  const scale = () => [0, 0, 1.2, 1][props.policies.length - (props.discarded == null ? 0 : 1)]
+  const offset = () => [0, 0, -0.6, -1][props.policies.length - (props.discarded == null ? 0 : 1)]
+
+  return (
+    <div class={s.CardSelector}>
+      <Index each={props.policies}>
+        {(policy, idx) => (
+          <Card
+            policy={policy()}
+            n={scale() * (idx - (idx > (props.discarded ?? 99) ? 1 : 0)) + offset()}
+            hidden={idx === props.discarded}
+            choose={() => props.onClick?.(idx)}
+          />
+        )}
+      </Index>
+    </div>
   )
 }
 
@@ -99,33 +116,20 @@ interface CardProps {
   choose: () => void
 }
 
-const CardSelectorCard: Component<CardProps> = props => {
-  // const { r, o } = useSpring({ r: props.n, o: props.hidden ? 0 : 1 })
-  // return (
-  //   <animated.div
-  //     onClick={() => props.choose()}
-  //     style={{
-  //       transform: interpolate(
-  //         [r, o],
-  //         (r, o) =>
-  //           `rotate(${10 * r}deg) translate(${80 * r}px, ${160 * (1 - o)}px)`
-  //       ),
-  //       opacity: o,
-  //     }}
-  //     className={`policy-card ${props.party.toLowerCase()}`}
-  //   />
-  // )
+const Card: Component<CardProps> = props => {
   return (
     <Motion.div
       onClick={props.choose}
       class={`${s.PolicyCard} ${s[props.policy]}`}
       animate={{
-        transform: `rotate(${10 * props.n}deg) translate(${80 * props.n}px, ${
-          props.hidden ? 160 : 0
-        }px)`,
+        transform: `rotate(${10 * props.n}deg) translate(${80 * props.n}px, ${props.hidden ? 160 : 0}px)`,
         opacity: props.hidden ? 0 : 1,
       }}
-      transition={{ duration: 0.4 }}
+      initial={{
+        transform: `rotate(${15 * props.n}deg) translate(${80 * props.n}px, 120px)`,
+        opacity: 0,
+      }}
+      transition={{ duration: 0.35 }}
     />
   )
 }

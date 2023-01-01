@@ -4,7 +4,7 @@
   line-height: 24px;
   padding: 8px;
   border-radius: 6px;
-  font-weight: bold;
+  font-weight: normal;
   border: none;
   width: 100%;
   text-align: center;
@@ -25,6 +25,10 @@
   color: black;
 }
 
+.Button.white:hover {
+  background-color: #f0f0f0;
+}
+
 .Button.yellow {
   background-color: #ffaa33;
   border: 2px solid #ffaa33;
@@ -35,10 +39,24 @@
   background-color: #ffbb44;
 }
 
+.Button.red {
+  background-color: #933;
+  color: white;
+  border: 2px solid #933;
+}
+
+.Button.red:hover {
+  background-color: #a44;
+}
+
 .Button.black {
   background-color: black;
   color: white;
   border: 2px solid #ddd;
+}
+
+.Button.black:hover {
+  background-color: #181818;
 }
 
 .Button.large {

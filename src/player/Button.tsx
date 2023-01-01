@@ -6,6 +6,7 @@ interface Props {
   onClick: () => void
   white?: boolean
   yellow?: boolean
+  red?: boolean
   black?: boolean
   small?: boolean
   large?: boolean
@@ -16,6 +17,7 @@ export const Button: Component<Props> = props => {
   const color = () => {
     if (props.white) return s.white
     if (props.yellow) return s.yellow
+    if (props.red) return s.red
     if (props.black) return s.black
     return s.white
   }

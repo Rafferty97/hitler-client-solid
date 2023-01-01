@@ -70,6 +70,7 @@ const deadPrompt = z.object({ type: z.literal('Dead') })
 const gameOverPrompt = z.object({
   type: z.literal('GameOver'),
   outcome: gameOutcome,
+  won: z.boolean(),
 })
 
 export const playerPrompt = z.discriminatedUnion('type', [

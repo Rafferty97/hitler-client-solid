@@ -4,7 +4,7 @@ import { ChoosePlayerPrompt, PlayerPrompt } from '../dm/player-prompt'
 import { Party, Role } from '../dm/role'
 import { PublicPlayer } from '../dm/state'
 import { Button } from './Button'
-import { CardSelector } from './CardSelector'
+import { CardSelector, PolicyPeak } from './CardSelector'
 import s from './PlayerApp.module.css'
 
 interface Props {
@@ -15,11 +15,10 @@ interface Props {
 }
 
 export const Prompt: Component<Props> = props => {
-  const makeAction = (action: PlayerAction) => () => props.action(action)
-
   return (
     <Switch fallback={<pre>{JSON.stringify(props, undefined, 2)}</pre>}>
       <Match when={props.prompt.type === 'Night'}>
+        {/* FIXME: Needs improvement */}
         <h3>Night round</h3>
         {props.players
           .filter(p => p.Party || p.Role)
@@ -28,10 +27,10 @@ export const Prompt: Component<Props> = props => {
               {player.name} {player.Role ?? player.Party}
             </p>
           ))}
-        <Button label="Okay" onClick={makeAction({ type: 'EndNightRound' })} />
+        <Button label="Okay" onClick={() => props.action({ type: 'EndNightRound' })} />
       </Match>
 
-      <Match when={isChoosePlayerPrompt(props.prompt)} keyed>
+      <Match when={props.prompt.type === 'ChoosePlayer' ? props.prompt : undefined} keyed>
         {prompt => <ChoosePlayer prompt={prompt} action={props.action} />}
       </Match>
 
@@ -43,16 +42,73 @@ export const Prompt: Component<Props> = props => {
         {prompt => (
           <CardSelector
             policies={prompt.cards}
-            veto={prompt.type === 'ChancellorDiscard' && prompt.can_veto}
+            canVeto={prompt.type === 'ChancellorDiscard' && prompt.can_veto}
             onChoose={index => props.action({ type: 'Discard', index })}
-            onVeto={makeAction({ type: 'VetoAgenda' })}
+            onVeto={() => props.action({ type: 'VetoAgenda' })}
           />
         )}
       </Match>
 
+      <Match when={props.prompt.type === 'ApproveVeto'}>
+        <p class={`${s.Message} ${s.padded}`}>Do you approve the veto?</p>
+        <Button label="Approve" white onClick={() => props.action({ type: 'AcceptVeto' })} />
+        <Button label="Reject" black onClick={() => props.action({ type: 'RejectVeto' })} />
+      </Match>
+
+      <Match when={props.prompt.type === 'PolicyPeak' ? props.prompt : undefined} keyed>
+        {prompt => (
+          <PolicyPeak policies={prompt.cards} onDone={() => props.action({ type: 'EndExecutiveAction' })} />
+        )}
+      </Match>
+
+      <Match when={props.prompt.type === 'InvestigatePlayer'}>
+        {/* FIXME: Needs improvement */}
+        <pre>{JSON.stringify(props.prompt, undefined, 2)}</pre>
+        <Button label="Done" onClick={() => props.action({ type: 'EndExecutiveAction' })} />
+      </Match>
+
+      <Match when={props.prompt.type === 'Radicalisation'}>
+        {/* FIXME: Needs improvement */}
+        <pre>{JSON.stringify(props.prompt, undefined, 2)}</pre>
+        <Button label="Done" onClick={() => props.action({ type: 'EndExecutiveAction' })} />
+      </Match>
+
+      <Match when={props.prompt.type === 'EndCongress'}>
+        <p class={`${s.Message} ${s.padded}`}>
+          <strong>Congress</strong>
+          <br />
+          <br />
+          <span style={{ 'text-transform': 'none' }}>
+            Take a moment to acknowledge your fellow communist comrades before moving on.
+          </span>
+        </p>
+        <Button yellow label="Done" onClick={() => props.action({ type: 'EndCongress' })} />
+      </Match>
+
       <Match when={props.prompt.type === 'StartElection'}>
         <p class={`${s.Message} ${s.padded}`}>Ready to continue?</p>
-        <Button label="Yes" onClick={makeAction({ type: 'EndCardReveal' })} />
+        <Button label="Yes" onClick={() => props.action({ type: 'EndCardReveal' })} />
+        {/* FIXME: Assassination */}
+      </Match>
+
+      <Match when={props.prompt.type === 'Dead'}>
+        <p class={`${s.Message} ${s.padded} ${s.dead}`}>You are dead</p>
+      </Match>
+
+      <Match when={props.prompt.type === 'GameOver' ? props.prompt : undefined} keyed>
+        {({ won }) => (
+          <>
+            <p class={`${s.Message} ${s.padded}`}>
+              <strong>Game over</strong>
+              <br />
+              <br />
+              <Switch>
+                <Match when={won}>You have won!</Match>
+                <Match when={!won}>You have been defeated!</Match>
+              </Switch>
+            </p>
+          </>
+        )}
       </Match>
     </Switch>
   )
@@ -60,15 +116,8 @@ export const Prompt: Component<Props> = props => {
 
 type ActionDispatcher = (action: PlayerAction) => void
 
-function isChoosePlayerPrompt(prompt: PlayerPrompt) {
-  return prompt.type === 'ChoosePlayer' ? prompt : undefined
-}
-
 function isDiscardPrompt(prompt: PlayerPrompt) {
-  if (
-    prompt.type === 'PresidentDiscard' ||
-    prompt.type == 'ChancellorDiscard'
-  ) {
+  if (prompt.type === 'PresidentDiscard' || prompt.type == 'ChancellorDiscard') {
     return prompt
   }
 }
@@ -90,7 +139,7 @@ const ChoosePlayer: Component<{
   </>
 )
 
-function choosePlayerMessage(prompt: ChoosePlayerPrompt): string {
+function choosePlayerMessage(prompt: ChoosePlayerPrompt) {
   switch (prompt.kind) {
     case 'NominateChancellor':
     case 'MonarchistFirstChancellor':
@@ -99,13 +148,21 @@ function choosePlayerMessage(prompt: ChoosePlayerPrompt): string {
     case 'NominatePresident':
       return 'Choose the next president'
     case 'Radicalise':
-      return 'Choose a player to radicalise'
+      return (
+        <>
+          Choose a player to <strong>radicalise</strong>
+        </>
+      )
     case 'VoteChancellor':
       return 'Please vote for a chancellor'
     case 'Confession':
       return 'Which player must reveal their party membership?'
     case 'Execute':
-      return 'Choose a player to execute'
+      return (
+        <>
+          Choose a player to <strong>execute</strong>
+        </>
+      )
     case 'Investigate':
       return 'Choose a player to investigate'
   }
