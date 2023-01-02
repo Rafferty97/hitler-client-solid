@@ -4,7 +4,7 @@ import { ChoosePlayerPrompt, PlayerPrompt } from '../dm/player-prompt'
 import { Party, Role } from '../dm/role'
 import { PublicPlayer } from '../dm/state'
 import { Button } from './Button'
-import { CardSelector, PolicyPeak } from './CardSelector'
+import { CardSelector, Investigate, PolicyPeak } from './CardSelector'
 import s from './PlayerApp.module.css'
 
 interface Props {
@@ -61,10 +61,8 @@ export const Prompt: Component<Props> = props => {
         )}
       </Match>
 
-      <Match when={props.prompt.type === 'InvestigatePlayer'}>
-        {/* FIXME: Needs improvement */}
-        <pre>{JSON.stringify(props.prompt, undefined, 2)}</pre>
-        <Button label="Done" onClick={() => props.action({ type: 'EndExecutiveAction' })} />
+      <Match when={props.prompt.type === 'InvestigatePlayer' ? props.prompt : undefined} keyed>
+        {prompt => <Investigate {...prompt} onDone={() => props.action({ type: 'EndExecutiveAction' })} />}
       </Match>
 
       <Match when={props.prompt.type === 'Radicalisation'}>
@@ -164,7 +162,11 @@ function choosePlayerMessage(prompt: ChoosePlayerPrompt) {
         </>
       )
     case 'Investigate':
-      return 'Choose a player to investigate'
+      return (
+        <>
+          Choose a player to <strong>investigate</strong>
+        </>
+      )
   }
   return 'Choose a player'
 }

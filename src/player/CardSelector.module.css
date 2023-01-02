@@ -15,7 +15,7 @@
   font-family: 'Germania One', sans-serif;
 }
 
-.PolicyCard {
+.PolicyCard, .PartyCard {
   position: absolute;
   top: 0;
   left: 50%;
@@ -40,6 +40,18 @@
 
 .PolicyCard.Liberal {
   background-image: url(../assets/liberal_article.png);
+}
+
+.PartyCard.Fascist {
+  background-image: url(../assets/fascist_party.png);
+}
+
+.PartyCard.Communist {
+  background-image: url(../assets/communist_party.png);
+}
+
+.PartyCard.Liberal {
+  background-image: url(../assets/liberal_party.png);
 }
 
 .Buttons {

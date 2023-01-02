@@ -1,4 +1,4 @@
-import { Component, createSignal, Index, Switch, Match } from 'solid-js'
+import { Component, createSignal, Index, Switch, Match, Show } from 'solid-js'
 import { Motion } from '@motionone/solid'
 import { Party } from '../dm/role'
 import { Button } from './Button'
@@ -75,6 +75,56 @@ export const PolicyPeak: Component<PolicyPeakProps> = props => {
             </Match>
             <Match when={!revealed()}>
               <Button red noPadding label="Reveal cards" onClick={() => setRevealed(true)} />
+            </Match>
+          </Switch>
+        </div>
+      </div>
+    </>
+  )
+}
+
+interface InvestigateProps {
+  name: string
+  party: Party
+  onDone: () => void
+}
+
+export const Investigate: Component<InvestigateProps> = props => {
+  const [revealed, setRevealed] = createSignal(false)
+
+  return (
+    <>
+      <Show when={revealed()}>
+        <p class={`${ps.Message} ${ps.large}`}>
+          <strong>{props.name}</strong> is&nbsp;a <strong>{props.party}</strong>
+        </p>
+      </Show>
+      <Show when={!revealed()}>
+        <p class={ps.Message}>
+          Click to investigate
+          <br />
+          <strong>{props.name}</strong>
+        </p>
+      </Show>
+      <div class={s.QuestionMark}>?</div>
+      <div class={s.CardSelector}>
+        <Motion.div
+          class={`${s.PartyCard} ${s[props.party]}`}
+          animate={{
+            transform: `translate(0, ${revealed() ? 0 : 160}px)`,
+            opacity: revealed() ? 1 : 0,
+          }}
+          transition={{ duration: 0.35 }}
+        />
+      </div>
+      <div class={s.Buttons}>
+        <div class={s.CentreButton}>
+          <Switch>
+            <Match when={revealed()}>
+              <Button yellow noPadding label="Done" onClick={props.onDone} />
+            </Match>
+            <Match when={!revealed()}>
+              <Button red noPadding label="View" onClick={() => setRevealed(true)} />
             </Match>
           </Switch>
         </div>

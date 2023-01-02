@@ -16,6 +16,10 @@
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
+.Message.large {
+  font-size: 18px;
+}
+
 .Message.dead {
   color: #d44;
   font-weight: bold;

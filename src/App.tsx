@@ -9,6 +9,8 @@ import styles from './App.module.css'
 
 /*
   TODO: Anarchist, interaction with special election, etc.
+  TODO: Check "too many players" error
+  TODO: Consistent spacing in ".Message"
 
   Centrist = 7 or more
   Monarchist (if you do it) = 8 or more
@@ -41,14 +43,14 @@ const App: Component = () => {
     'CHARLIE',
     'DAVID',
     'EDDY',
-    // 'FRED',
-    // 'GEORGE',
+    'FRED',
+    'GEORGE',
     // 'IJ',
     // 'JACK',
   ]
 
   const options: GameOptions = {
-    communists: false,
+    communists: true,
     monarchist: false,
     anarchist: false,
     capitalist: false,
