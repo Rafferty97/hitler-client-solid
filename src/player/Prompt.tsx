@@ -91,6 +91,12 @@ export const Prompt: Component<Props> = props => {
         {/* FIXME: Assassination */}
       </Match>
 
+      <Match when={props.prompt.type === 'HijackElection'}>
+        {/* FIXME: Needs improvement */}
+        <h4>Hijack election?</h4>
+        <button onClick={() => props.action({ type: 'HijackElection' })}>HIJACK</button>
+      </Match>
+
       <Match when={props.prompt.type === 'Dead'}>
         <p class={`${s.Message} ${s.padded} ${s.dead}`}>You are dead</p>
       </Match>

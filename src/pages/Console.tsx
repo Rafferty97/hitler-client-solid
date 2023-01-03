@@ -115,7 +115,7 @@ const BoardPrompt: Component<{
   const playerName = (idx: number | null) => (idx == null ? '--' : players()[idx].name)
 
   return (
-    <>
+    <div style={{ height: '300px' }}>
       <p>
         <strong>Liberals: </strong>
         {board()?.liberal_cards ?? '--'}
@@ -272,68 +272,7 @@ const BoardPrompt: Component<{
           <p>UNKNOWN PROMPT: {board()?.prompt?.type}</p>
         </Match>
       </Switch>
-    </>
-  )
-}
-
-const PlayerPrompt: Component<{
-  state: GameState | undefined
-  action: (action: PlayerAction) => void
-}> = props => {
-  const player = () => {
-    const state = props.state?.state
-    return state?.type === 'player' ? state : undefined
-  }
-
-  return (
-    <>
-      <p style={{ 'margin-top': '-15px' }}>{player()?.role}</p>
-      <Switch>
-        <Match when={player()?.prompt?.type === 'ApproveVeto'}>
-          <button onClick={() => props.action({ type: 'AcceptVeto' })}>APPROVE</button>
-          <button onClick={() => props.action({ type: 'RejectVeto' })}>REJECT</button>
-        </Match>
-        <Match when={isInvestigatePlayer(player())} keyed>
-          {state => (
-            <>
-              <p>Investigate Player</p>
-              <p>
-                {state.name} is a {state.party}
-              </p>
-              <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>OKAY</button>
-            </>
-          )}
-        </Match>
-        <Match when={isRadicalisationResult(player())} keyed>
-          {state => (
-            <>
-              <h4>Radicalisation Result</h4>
-              <p>{state.result}</p>
-              <button onClick={() => props.action({ type: 'EndExecutiveAction' })}>OKAY</button>
-            </>
-          )}
-        </Match>
-        <Match when={player()?.prompt?.type === 'HijackElection'}>
-          <h4>Hijack election?</h4>
-          <button onClick={() => props.action({ type: 'HijackElection' })}>HIJACK</button>
-        </Match>
-        <Match when={player()?.prompt?.type === 'EndCongress'}>
-          <h4>Congress</h4>
-          <button onClick={() => props.action({ type: 'EndCongress' })}>DONE</button>
-        </Match>
-        <Match when={isGameOver(player())} keyed>
-          {state => (
-            <>
-              <h4>GAME OVER</h4>
-              <p>{state.outcome}</p>
-            </>
-          )}
-        </Match>
-        <Match when={player()?.prompt != null}>
-          <p>UNKNOWN PROMPT: {player()?.prompt?.type}</p>
-        </Match>
-      </Switch>
-    </>
+    </div>
   )
 }
 

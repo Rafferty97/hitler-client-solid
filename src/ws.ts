@@ -26,7 +26,7 @@ export function createWs() {
     return s ? { gameId: s.game_id, name: s.name } : undefined
   })
 
-  const ws = new WebsocketBuilder('ws://localhost:8888')
+  const ws = new WebsocketBuilder(import.meta.env.VITE_WS_URL)
     .withBackoff(new LinearBackoff(1000, 250, 2500))
     .onOpen(ws => {
       setConnected(true)
