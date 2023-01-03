@@ -1,16 +1,18 @@
-import { JSX, Component, createEffect, Match, Switch } from 'solid-js'
+import { Component, createEffect, Match, Switch } from 'solid-js'
 import { LiveHeader } from '../components/LiveHeader'
 import { GameState } from '../dm/state'
 import { validateGameIdAndName } from '../validate'
 import { createWs } from '../ws'
 import { JoinGame } from './JoinGame'
 import { Lobby } from './Lobby'
-import s from './PlayerApp.module.css'
 import { Prompt } from './Prompt'
+import s from './PlayerApp.module.css'
 
 interface Props {
   gameId?: string
   name?: string
+  onJoin: (gameId: string, name: string) => void
+  onExit: () => void
 }
 
 export const PlayerApp: Component<Props> = props => {
@@ -25,26 +27,18 @@ export const PlayerApp: Component<Props> = props => {
     }
   })
 
+  const name = () => ws.state()?.name ?? undefined
+
   return (
     <div class={s.PlayerApp}>
-      <LiveHeader connected={ws.connected()} name={ws.state()?.name ?? '--'} />
+      <LiveHeader connected={ws.connected()} name={name()} />
       <div class={s.Container}>
         <Switch>
-          <Match when={ws.state() == null}>
-            <JoinGame join={ws.joinAsPlayer} />
+          <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
+            <JoinGame name={props.name} join={props.onJoin} />
           </Match>
-          <Match when={isEnded(ws.state())} keyed>
-            {gameId => {
-              const error = `Game ${gameId} does not exist`
-              return (
-                <JoinGame
-                  gameId={props.gameId}
-                  name={props.name}
-                  join={ws.joinAsPlayer}
-                  error={error}
-                />
-              )
-            }}
+          <Match when={isError(ws.state())} keyed>
+            {error => <JoinGame gameId={props.gameId} name={props.name} join={props.onJoin} error={error} />}
           </Match>
           <Match when={ws.state()?.state.type === 'connecting'}>
             <p class={s.Message}>Joining game...</p>
@@ -53,7 +47,9 @@ export const PlayerApp: Component<Props> = props => {
             {state => <Lobby {...state} start={ws.startGame} />}
           </Match>
           <Match when={isPrompt(ws.state())} keyed>
-            {state => <Prompt {...state} action={ws.playerAction} />}
+            {state => (
+              <Prompt {...state} action={ws.playerAction} startGame={ws.startGame} endGame={ws.endGame} />
+            )}
           </Match>
         </Switch>
       </div>
@@ -85,6 +81,15 @@ function isPrompt(state: GameState | undefined) {
   }
 }
 
-function isEnded(state: GameState | undefined) {
-  return state?.state.type === 'ended' ? state.game_id : undefined
+function isError(state: GameState | undefined) {
+  if (state?.state.type === 'error') {
+    switch (state.state.error) {
+      case 'notfound':
+        return `Game ${state.game_id} not found`
+      case 'toomanyplayers':
+        return `The game has reached its maximum player count`
+      case 'inprogress':
+        return `Game has already started`
+    }
+  }
 }

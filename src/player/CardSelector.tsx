@@ -114,6 +114,10 @@ export const Investigate: Component<InvestigateProps> = props => {
             transform: `translate(0, ${revealed() ? 0 : 160}px)`,
             opacity: revealed() ? 1 : 0,
           }}
+          initial={{
+            transform: `translate(0, 160px)`,
+            opacity: 0,
+          }}
           transition={{ duration: 0.35 }}
         />
       </div>

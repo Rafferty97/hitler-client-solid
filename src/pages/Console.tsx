@@ -1,11 +1,12 @@
 import { Component, createEffect, Match, Switch } from 'solid-js'
 import { useSearchParams } from '@solidjs/router'
-import { BoardAction, PlayerAction } from './dm/action'
-import { BoardState, GameState, PlayerState } from './dm/state'
-import { createWs, GameOptions } from './ws'
-import { PlayerApp } from './player/PlayerApp'
-import { validateGameId } from './validate'
-import styles from './App.module.css'
+import { BoardAction, PlayerAction } from '../dm/action'
+import { BoardState, GameState, PlayerState } from '../dm/state'
+import { createWs, GameOptions } from '../ws'
+import { PlayerApp } from '../player/PlayerApp'
+import { validateGameId } from '../validate'
+import { PrefetchImages } from '../components/Prefetch'
+import styles from './Console.module.css'
 
 /*
   TODO: Anarchist, interaction with special election, etc.
@@ -17,7 +18,7 @@ import styles from './App.module.css'
   Capitalist & Anarchist = 9 or more
 */
 
-const App: Component = () => {
+const ConsolePage: Component = () => {
   const [params, setParams] = useSearchParams()
   const gameId = () => params.game ?? ''
   const setGameId = (game: string) => setParams({ game })
@@ -43,22 +44,27 @@ const App: Component = () => {
     'CHARLIE',
     'DAVID',
     'EDDY',
-    'FRED',
-    'GEORGE',
+    // 'FRED',
+    // 'GEORGE',
     // 'IJ',
     // 'JACK',
+    // 'KAREN',
+    // 'LILLY',
   ]
 
   const options: GameOptions = {
-    communists: true,
+    communists: false,
     monarchist: false,
     anarchist: false,
     capitalist: false,
     centrists: false,
   }
 
+  const noop = () => {}
+
   return (
     <div>
+      <PrefetchImages />
       <div class={styles.App}>
         {!ws.connected() && <p>DISCONNECTED...</p>}
         <p>
@@ -85,7 +91,7 @@ const App: Component = () => {
               overflow: 'hidden',
             }}
           >
-            <PlayerApp name={player} gameId={gameId()} />
+            <PlayerApp name={player} gameId={gameId()} onJoin={noop} onExit={noop} />
           </div>
         ))}
       </div>
@@ -408,4 +414,4 @@ function isGameOver(state?: BoardState | PlayerState) {
   return state?.prompt?.type === 'GameOver' ? state.prompt : undefined
 }
 
-export default App
+export default ConsolePage

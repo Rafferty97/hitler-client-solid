@@ -25,3 +25,17 @@
 .dot.connected {
   background-color: rgb(19, 114, 73);
 }
+
+.Name {
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+.Exit {
+  color: #b44;
+  font-weight: bold;
+  padding: 5px 0;
+  margin: -10px 0 -10px 15px;
+  text-decoration: none;
+  text-transform: uppercase;
+}

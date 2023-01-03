@@ -8,6 +8,7 @@ export type GameState = z.infer<typeof gameState>
 export type PlayerState = z.infer<typeof playerState>
 export type BoardState = z.infer<typeof boardState>
 export type PublicPlayer = z.infer<typeof publicPlayer>
+export type ErrorKind = z.infer<typeof errorState>['error']
 
 const connectingState = z.object({ type: z.literal('connecting') })
 
@@ -50,6 +51,11 @@ const playerState = z.object({
 
 const endedState = z.object({ type: z.literal('ended') })
 
+const errorState = z.object({
+  type: z.literal('error'),
+  error: z.enum(['notfound', 'toomanyplayers', 'inprogress']),
+})
+
 const publicPlayer = z.object({
   name: z.string(),
   alive: z.boolean(),
@@ -66,5 +72,6 @@ export const gameState = z.object({
     boardState,
     playerState,
     endedState,
+    errorState,
   ]),
 })

@@ -1,4 +1,4 @@
-import { Component, Match, Switch } from 'solid-js'
+import { Component, Match, Show, Switch } from 'solid-js'
 import { PlayerAction } from '../dm/action'
 import { ChoosePlayerPrompt, PlayerPrompt } from '../dm/player-prompt'
 import { Party, Role } from '../dm/role'
@@ -12,6 +12,8 @@ interface Props {
   role: Role
   players: (PublicPlayer & { Role?: Role; Party?: Party })[]
   action: (action: PlayerAction) => void
+  startGame: () => void
+  endGame: () => void
 }
 
 export const Prompt: Component<Props> = props => {
@@ -94,19 +96,7 @@ export const Prompt: Component<Props> = props => {
       </Match>
 
       <Match when={props.prompt.type === 'GameOver' ? props.prompt : undefined} keyed>
-        {({ won }) => (
-          <>
-            <p class={`${s.Message} ${s.padded}`}>
-              <strong>Game over</strong>
-              <br />
-              <br />
-              <Switch>
-                <Match when={won}>You have won!</Match>
-                <Match when={!won}>You have been defeated!</Match>
-              </Switch>
-            </p>
-          </>
-        )}
+        {({ won }) => <Gameover won={won} onRestart={props.startGame} onEnd={props.endGame} />}
       </Match>
     </Switch>
   )
@@ -178,6 +168,22 @@ const Vote: Component<{ action: (action: PlayerAction) => void }> = props => {
       <p class={`${s.Message} ${s.padded}`}>Cast your vote</p>
       <Button large white label="Ja!" onClick={vote(true)} />
       <Button large black label="Nein!" onClick={vote(false)} />
+    </>
+  )
+}
+
+const Gameover: Component<{ won: boolean; onRestart: () => any; onEnd: () => any }> = props => {
+  return (
+    <>
+      <p class={`${s.Message} ${s.padded}`}>
+        <strong>Game over</strong>
+        <br />
+        <br />
+        <Show when={props.won}>You have won!</Show>
+        <Show when={!props.won}>You have been defeated!</Show>
+      </p>
+      <Button yellow label="Play again" onClick={props.onRestart} />
+      <Button black label="End game" onClick={props.onEnd} />
     </>
   )
 }

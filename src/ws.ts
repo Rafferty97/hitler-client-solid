@@ -2,7 +2,7 @@ import { createMemo, createSignal } from 'solid-js'
 import { LinearBackoff, WebsocketBuilder } from 'websocket-ts'
 import { z } from 'zod'
 import { BoardAction, PlayerAction } from './dm/action'
-import { gameState, GameState } from './dm/state'
+import { ErrorKind, gameState, GameState } from './dm/state'
 
 export interface Credentials {
   gameId: string
@@ -41,9 +41,15 @@ export function createWs() {
       }
       if (msg.data.type === 'update') setState(msg.data.state)
       if (msg.data.type === 'error') {
+        const gameId = cxn()?.gameId
         if (msg.data.error === 'game does not exist') {
-          const gameId = cxn()?.gameId
-          setState(gameId ? endedState(gameId) : undefined)
+          setState(gameId ? errorState(gameId, 'notfound') : undefined)
+        }
+        if (msg.data.error === 'too many players in the game') {
+          setState(gameId ? errorState(gameId, 'toomanyplayers') : undefined)
+        }
+        if (msg.data.error === 'cannot join a game in progress') {
+          setState(gameId ? errorState(gameId, 'inprogress') : undefined)
         }
       }
     })
@@ -59,8 +65,7 @@ export function createWs() {
     connected,
     state,
     gameId: createMemo(() => state()?.game_id),
-    createGame: (options: GameOptions) =>
-      ws.send(JSON.stringify({ CreateGame: { options } })),
+    createGame: (options: GameOptions) => ws.send(JSON.stringify({ CreateGame: { options } })),
     joinAsBoard: (gameId: string) => join({ gameId, name: null }),
     joinAsPlayer: (gameId: string, name: string) => join({ gameId, name }),
     leave: () => {
@@ -68,10 +73,9 @@ export function createWs() {
       ws.send(JSON.stringify('LeaveGame'))
     },
     startGame: () => ws.send(JSON.stringify('StartGame')),
-    boardAction: (action: BoardAction) =>
-      ws.send(JSON.stringify({ BoardAction: action })),
-    playerAction: (action: PlayerAction) =>
-      ws.send(JSON.stringify({ PlayerAction: action })),
+    endGame: () => ws.send(JSON.stringify('EndGame')),
+    boardAction: (action: BoardAction) => ws.send(JSON.stringify({ BoardAction: action })),
+    playerAction: (action: PlayerAction) => ws.send(JSON.stringify({ PlayerAction: action })),
   }
 }
 
@@ -91,6 +95,15 @@ function endedState(gameId: string): GameState {
     name: null,
     players: [],
     state: { type: 'ended' },
+  }
+}
+
+function errorState(gameId: string, error: ErrorKind): GameState {
+  return {
+    game_id: gameId,
+    name: null,
+    players: [],
+    state: { type: 'error', error },
   }
 }
 

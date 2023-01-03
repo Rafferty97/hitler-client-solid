@@ -59,6 +59,13 @@
   background-color: #181818;
 }
 
+.Button.disabled {
+  background-color: transparent;
+  color: #999;
+  border: 2px solid #999;
+  cursor: default;
+}
+
 .Button.large {
   padding: 16px 8px;
   font-size: 20px;
