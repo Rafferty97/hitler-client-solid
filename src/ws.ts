@@ -1,4 +1,4 @@
-import { createMemo, createSignal } from 'solid-js'
+import { createMemo, createSignal, untrack } from 'solid-js'
 import { LinearBackoff, WebsocketBuilder } from 'websocket-ts'
 import { z } from 'zod'
 import { BoardAction, PlayerAction } from './dm/action'
@@ -57,6 +57,10 @@ export function createWs() {
     .build()
 
   const join = (cxn: Credentials) => {
+    const state_ = untrack(state)
+    if (cxn.gameId === state_?.game_id && cxn.name === state_?.name) {
+      return
+    }
     setState(connectingState(cxn))
     ws.send(connectionMessage(cxn)!)
   }

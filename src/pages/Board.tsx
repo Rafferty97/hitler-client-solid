@@ -13,7 +13,7 @@ const BoardPage: Component = () => {
   return (
     <div class={s.BoardPage}>
       <PrefetchImages />
-      <BoardApp gameId={params.gameId} onJoin={join} onExit={exit} />
+      <BoardApp gameId={params.game} onJoin={join} onExit={exit} />
     </div>
   )
 }
