@@ -8,12 +8,11 @@ const PlayerPage: Component = () => {
   const [params, setParams] = useSearchParams()
 
   const join = (game: string, name: string) => setParams({ game, name })
-  const exit = () => setParams({ game: '', name: '' })
 
   return (
     <div class={s.PlayerPage}>
       <PrefetchImages />
-      <PlayerApp gameId={params.game} name={params.name} onJoin={join} onExit={exit} />
+      <PlayerApp gameId={params.game} name={params.name} onJoin={join} />
     </div>
   )
 }

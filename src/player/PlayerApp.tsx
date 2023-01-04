@@ -1,4 +1,4 @@
-import { Component, createEffect, Match, Switch } from 'solid-js'
+import { Component, createEffect, Match, Switch, untrack } from 'solid-js'
 import { LiveHeader } from '../components/LiveHeader'
 import { GameState } from '../dm/state'
 import { validateGameIdAndName } from '../validate'
@@ -12,18 +12,26 @@ interface Props {
   gameId?: string
   name?: string
   onJoin: (gameId: string, name: string) => void
-  onExit: () => void
 }
 
 export const PlayerApp: Component<Props> = props => {
   const ws = createWs()
 
   createEffect(() => {
-    const creds = validateGameIdAndName(props.gameId, props.name)
-    if (creds) {
-      ws.joinAsPlayer(creds.gameId, creds.name)
-    } else {
+    const next = validateGameIdAndName(props.gameId, props.name)
+    const current = untrack(ws.credentials)
+    if (next && (next.gameId !== current?.gameId || next.name !== current?.name)) {
+      ws.joinAsPlayer(next.gameId, next.name)
+    }
+    if (!next && current) {
       ws.leave()
+    }
+  })
+
+  createEffect(() => {
+    const creds = ws.credentials()
+    if (creds && creds.name) {
+      props.onJoin(creds.gameId, creds.name)
     }
   })
 
@@ -35,10 +43,12 @@ export const PlayerApp: Component<Props> = props => {
       <div class={s.Container}>
         <Switch>
           <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
-            <JoinGame name={props.name} join={props.onJoin} />
+            <JoinGame name={props.name} join={ws.joinAsPlayer} />
           </Match>
           <Match when={isError(ws.state())} keyed>
-            {error => <JoinGame gameId={props.gameId} name={props.name} join={props.onJoin} error={error} />}
+            {error => (
+              <JoinGame gameId={props.gameId} name={props.name} join={ws.joinAsPlayer} error={error} />
+            )}
           </Match>
           <Match when={ws.state()?.state.type === 'connecting'}>
             <p class={s.Message}>Joining game...</p>

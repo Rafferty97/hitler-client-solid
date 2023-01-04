@@ -8,12 +8,11 @@ const BoardPage: Component = () => {
   const [params, setParams] = useSearchParams()
 
   const join = (game: string) => setParams({ game })
-  const exit = () => setParams({ game: '' })
 
   return (
     <div class={s.BoardPage}>
       <PrefetchImages />
-      <BoardApp gameId={params.game} onJoin={join} onExit={exit} />
+      <BoardApp gameId={params.game} onJoin={join} />
     </div>
   )
 }

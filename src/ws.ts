@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { BoardAction, PlayerAction } from './dm/action'
 import { ErrorKind, gameState, GameState } from './dm/state'
 
-export interface Credentials {
+export interface GameCredentials {
   gameId: string
   name: string | null
 }
@@ -21,7 +21,7 @@ export function createWs() {
   const [connected, setConnected] = createSignal(false)
   const [state, setState] = createSignal<GameState | undefined>(undefined)
 
-  const cxn = createMemo<Credentials | undefined>(() => {
+  const creds = createMemo<GameCredentials | undefined>(() => {
     const s = state()
     return s ? { gameId: s.game_id, name: s.name } : undefined
   })
@@ -30,7 +30,7 @@ export function createWs() {
     .withBackoff(new LinearBackoff(1000, 250, 2500))
     .onOpen(ws => {
       setConnected(true)
-      const msg = connectionMessage(cxn())
+      const msg = connectionMessage(creds())
       if (msg) ws.send(msg)
     })
     .onMessage((ws, event) => {
@@ -41,26 +41,24 @@ export function createWs() {
       }
       if (msg.data.type === 'update') setState(msg.data.state)
       if (msg.data.type === 'error') {
-        const gameId = cxn()?.gameId
+        const gameId = creds()?.gameId
+        if (!gameId) return
         if (msg.data.error === 'game does not exist') {
-          setState(gameId ? errorState(gameId, 'notfound') : undefined)
+          setState(errorState(gameId, 'notfound'))
         }
         if (msg.data.error === 'too many players in the game') {
-          setState(gameId ? errorState(gameId, 'toomanyplayers') : undefined)
+          setState(errorState(gameId, 'toomanyplayers'))
         }
         if (msg.data.error === 'cannot join a game in progress') {
-          setState(gameId ? errorState(gameId, 'inprogress') : undefined)
+          setState(errorState(gameId, 'inprogress'))
         }
       }
     })
+    .onError(() => setConnected(false))
     .onClose(() => setConnected(false))
     .build()
 
-  const join = (cxn: Credentials) => {
-    const state_ = untrack(state)
-    if (cxn.gameId === state_?.game_id && cxn.name === state_?.name) {
-      return
-    }
+  const join = (cxn: GameCredentials) => {
     setState(connectingState(cxn))
     ws.send(connectionMessage(cxn)!)
   }
@@ -68,7 +66,8 @@ export function createWs() {
   return {
     connected,
     state,
-    gameId: createMemo(() => state()?.game_id),
+    credentials: creds,
+    gameId: () => creds()?.gameId,
     createGame: (options: GameOptions) => ws.send(JSON.stringify({ CreateGame: { options } })),
     joinAsBoard: (gameId: string) => join({ gameId, name: null }),
     joinAsPlayer: (gameId: string, name: string) => join({ gameId, name }),
@@ -83,22 +82,13 @@ export function createWs() {
   }
 }
 
-function connectingState(id: Credentials | undefined): GameState | undefined {
+function connectingState(id: GameCredentials | undefined): GameState | undefined {
   if (!id) return undefined
   return {
     game_id: id.gameId,
     name: id.name,
     players: [],
     state: { type: 'connecting' },
-  }
-}
-
-function endedState(gameId: string): GameState {
-  return {
-    game_id: gameId,
-    name: null,
-    players: [],
-    state: { type: 'ended' },
   }
 }
 
@@ -111,7 +101,7 @@ function errorState(gameId: string, error: ErrorKind): GameState {
   }
 }
 
-function connectionMessage(id: Credentials | undefined): string | undefined {
+function connectionMessage(id: GameCredentials | undefined): string | undefined {
   if (!id) return
   return JSON.stringify({
     [id.name ? 'JoinAsPlayer' : 'JoinAsBoard']: {

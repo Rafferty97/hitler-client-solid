@@ -91,7 +91,7 @@ const ConsolePage: Component = () => {
               overflow: 'hidden',
             }}
           >
-            <PlayerApp name={player} gameId={gameId()} onJoin={noop} onExit={noop} />
+            <PlayerApp name={player} gameId={gameId()} onJoin={noop} />
           </div>
         ))}
       </div>
