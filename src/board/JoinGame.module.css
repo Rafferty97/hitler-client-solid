@@ -1,0 +1,19 @@
+.JoinGame {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+}
+
+.JoinGame .Column {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.JoinGame .Divider {
+  width: 0;
+  height: 50vh;
+  border-left: 2px dashed #888;
+}

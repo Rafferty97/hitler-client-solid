@@ -1,9 +1,11 @@
-import { Component, createEffect, Match, Switch, untrack } from 'solid-js'
+import { Component, createEffect, Match, Show, Switch, untrack } from 'solid-js'
 import { LiveHeader } from '../components/LiveHeader'
 import { GameState } from '../dm/state'
 import { validateGameId } from '../validate'
 import { createWs } from '../ws'
 import { JoinGame } from './JoinGame'
+import { PlayerRail } from './PlayerRail'
+import { BoardContent } from './BoardContent'
 import s from './BoardApp.module.css'
 
 interface Props {
@@ -32,50 +34,25 @@ export const BoardApp: Component<Props> = props => {
     }
   })
 
-  const create = () =>
-    ws.createGame({
-      communists: false,
-      anarchist: false,
-      capitalist: false,
-      centrists: false,
-      monarchist: false,
-    })
-
   return (
     <div class={s.BoardApp}>
       <LiveHeader connected={ws.connected()} />
       <Switch>
         <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
-          <JoinGame join={ws.joinAsBoard} createGame={create} />
+          <JoinGame join={ws.joinAsBoard} createGame={ws.createGame} />
         </Match>
         <Match when={isError(ws.state())} keyed>
-          {error => <JoinGame gameId={props.gameId} join={props.onJoin} createGame={create} error={error} />}
+          {error => (
+            <JoinGame gameId={props.gameId} join={props.onJoin} createGame={ws.createGame} error={error} />
+          )}
         </Match>
-        <Match when={true}>
-          <pre>{JSON.stringify(ws.state(), undefined, 2)}</pre>
+        <Match when={ws.state()}>
+          <div class={s.Board}>
+            <BoardContent state={ws.state()!} />
+            <PlayerRail state={ws.state()!} />
+          </div>
         </Match>
       </Switch>
-      {/* <div class={s.Container}>
-        <Switch>
-          <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
-            <JoinGame join={props.onJoin} />
-          </Match>
-          <Match when={isError(ws.state())} keyed>
-            {error => <JoinGame gameId={props.gameId} join={props.onJoin} error={error} />}
-          </Match>
-          <Match when={ws.state()?.state.type === 'connecting'}>
-            <p class={s.Message}>Joining game...</p>
-          </Match>
-          <Match when={isLobby(ws.state())} keyed>
-            {state => <Lobby {...state} start={ws.startGame} />}
-          </Match>
-          <Match when={isPrompt(ws.state())} keyed>
-            {state => (
-              <Prompt {...state} action={ws.playerAction} startGame={ws.startGame} endGame={ws.endGame} />
-            )}
-          </Match>
-        </Switch>
-      </div> */}
     </div>
   )
 }

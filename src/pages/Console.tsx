@@ -1,16 +1,15 @@
 import { Component, createEffect, Match, Switch } from 'solid-js'
 import { useSearchParams } from '@solidjs/router'
-import { BoardAction, PlayerAction } from '../dm/action'
-import { BoardState, GameState, PlayerState } from '../dm/state'
-import { createWs, GameOptions } from '../ws'
+import { BoardAction } from '../dm/action'
+import { BoardState, GameState } from '../dm/state'
+import { createWs } from '../ws'
 import { PlayerApp } from '../player/PlayerApp'
 import { validateGameId } from '../validate'
 import { PrefetchImages } from '../components/Prefetch'
-import styles from './Console.module.css'
+import { BoardApp } from '../board/BoardApp'
 
 /*
   TODO: Anarchist, interaction with special election, etc.
-  TODO: Check "too many players" error
   TODO: Consistent spacing in ".Message"
 
   Centrist = 7 or more
@@ -44,42 +43,28 @@ const ConsolePage: Component = () => {
     'CHARLIE',
     'DAVID',
     'EDDY',
-    // 'FRED',
-    // 'GEORGE',
+    'FRED',
+    'GEORGE',
     // 'IJ',
     // 'JACK',
     // 'KAREN',
     // 'LILLY',
   ]
 
-  const options: GameOptions = {
-    communists: false,
-    monarchist: false,
-    anarchist: false,
-    capitalist: false,
-    centrists: false,
-  }
-
   const noop = () => {}
 
   return (
     <div>
       <PrefetchImages />
-      <div class={styles.App}>
-        {!ws.connected() && <p>DISCONNECTED...</p>}
-        <p>
-          Game ID:{' '}
-          <input
-            value={gameId()}
-            onInput={ev => setGameId((ev.target as HTMLInputElement).value)}
-            style={{ 'text-transform': 'uppercase' }}
-          />
-        </p>
-        <button onClick={() => ws.createGame(options)}>CREATE GAME</button>
-        {canStart(ws.state()) && <button onClick={() => ws.startGame()}>START GAME</button>}
-        <hr />
-        <BoardPrompt state={ws.state()} action={ws.boardAction} />
+      <div style={{ position: 'relative', background: '#222', height: '600px', margin: '0 0 40px' }}>
+        <BoardApp gameId={gameId()} onJoin={setGameId} />
       </div>
+      <button onClick={() => ws.boardAction({ type: 'EndVoting' })}>End voting</button>
+      <button onClick={() => ws.boardAction({ type: 'EndCardReveal' })}>End card reveal</button>
+      <button onClick={() => ws.boardAction({ type: 'EndLegislativeSession' })}>
+        End legislative session
+      </button>
+      <button onClick={() => ws.boardAction({ type: 'EndExecutiveAction' })}>End action</button>
       <div style={{ display: 'flex', 'flex-wrap': 'wrap', margin: '40px 0' }}>
         {players.map(player => (
           <div
@@ -276,16 +261,6 @@ const BoardPrompt: Component<{
   )
 }
 
-function canStart(state: GameState | undefined): boolean {
-  if (state?.state.type == 'lobby') {
-    return state.state.can_start
-  }
-  if (state?.state.type == 'board') {
-    return state.state.prompt?.type === 'GameOver'
-  }
-  return false
-}
-
 function isElection(state?: BoardState) {
   return state?.prompt?.type === 'Election' ? state.prompt : undefined
 }
@@ -322,34 +297,7 @@ function isMonarchistElection(state?: BoardState) {
   return state?.prompt?.type === 'MonarchistElection' ? state.prompt : undefined
 }
 
-function isChoosePlayer(state?: PlayerState) {
-  return state?.prompt?.type === 'ChoosePlayer' ? state.prompt : undefined
-}
-
-function isDiscard(state?: PlayerState) {
-  const prompt = state?.prompt
-  if (prompt?.type === 'PresidentDiscard' || prompt?.type === 'ChancellorDiscard') {
-    return prompt
-  }
-}
-
-function isStartElection(state?: PlayerState) {
-  return state?.prompt?.type === 'StartElection' ? state.prompt : undefined
-}
-
-function isPolicyPeak(state?: PlayerState) {
-  return state?.prompt?.type === 'PolicyPeak' ? state.prompt : undefined
-}
-
-function isInvestigatePlayer(state?: PlayerState) {
-  return state?.prompt?.type === 'InvestigatePlayer' ? state.prompt : undefined
-}
-
-function isRadicalisationResult(state?: PlayerState) {
-  return state?.prompt?.type === 'Radicalisation' ? state.prompt : undefined
-}
-
-function isGameOver(state?: BoardState | PlayerState) {
+function isGameOver(state?: BoardState) {
   return state?.prompt?.type === 'GameOver' ? state.prompt : undefined
 }
 

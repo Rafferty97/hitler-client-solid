@@ -1,0 +1,87 @@
+.PlayerRail {
+  flex: 0 0 auto;
+  width: 25%;
+  min-width: 300px;
+  max-width: 350px;
+  background: #111;
+  border-left: 2px solid #2a2828;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.Player {
+  position: relative;
+  margin: 0 0 8px;
+  padding: 9px 0 8px 12px;
+  font-size: 17px;
+  font-family: 'Germania One', sans-serif;
+  background-color: #822;
+  color: white;
+  text-shadow: 1px 1px 1px black;
+  transition: opacity 0.6s;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.Spacer {
+  flex: 1 1 0;
+}
+
+h2 {
+  font-size: 15px;
+  text-transform: uppercase;
+  text-align: center;
+  color: #aaa;
+  margin: 0;
+}
+
+.Deck {
+  font-size: 52px;
+  line-height: 1;
+  text-align: center;
+  font-family: 'Germania One', sans-serif;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.ElectionTracker {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 20px auto 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.ElectionTracker .Line {
+  position: absolute;
+  left: 12.5%;
+  right: 12.5%;
+  top: 50%;
+  margin-top: -1px;
+  border-bottom: 2px dashed #888;
+}
+
+.ElectionTracker .Dot {
+  position: relative;
+  border: 2px solid #ddd;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  box-sizing: border-box;
+  background: black;
+}
+
+.ElectionTracker .Token {
+  position: absolute;
+  background-color: #b22;
+  top: 5px;
+  width: 20px;
+  height: 20px;
+  margin: 0 0 0 -10px;
+  transition: left 0.8s;
+  border-radius: 15px;
+  box-sizing: border-box;
+}

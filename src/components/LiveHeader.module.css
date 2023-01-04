@@ -3,11 +3,13 @@
   background-color: rgba(0, 0, 0, 0.25);
   border-bottom: 1px solid #888;
   line-height: 20px;
+  height: 50px;
   color: #bbb;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .dot {
