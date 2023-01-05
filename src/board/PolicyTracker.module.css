@@ -1,0 +1,53 @@
+
+
+.PolicyTracker {
+  background-color: black;
+  display: flex;
+  padding: 18px 20px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+
+  margin: 20px;
+}
+
+.PolicyTracker .Tile {
+  background-size: 90% auto;
+  background-position: 50% 50%;
+  flex: 1 1 0;
+
+  width: 150px;
+  height: 200px;
+}
+
+.PolicyTracker .Tile + .Tile {
+  border-left: 2px dashed #444;
+}
+
+.Tile.fascist-win {
+  background-image: url(../assets/board_fascist_win.png);
+}
+
+.Tile.liberal-win {
+  background-image: url(../assets/board_liberal_win.png);
+}
+
+.Tile.investigate {
+  background-image: url(../assets/board_investigate.png);
+}
+
+.Tile.election {
+  background-image: url(../assets/board_election.png);
+}
+
+.Tile.policy-peak {
+  background-image: url(../assets/board_policy_peak.png);
+}
+
+.Tile.kill {
+  background-image: url(../assets/board_kill.png);
+}
+
+.Tile.kill-veto {
+  background-image: url(../assets/board_kill_veto.png);
+}

@@ -26,7 +26,7 @@ export const JoinGame: Component<Props> = props => {
   const createGame = (ev: Event) => {
     ev.preventDefault()
     props.createGame({
-      communists: true,
+      communists: false,
       monarchist: false,
       anarchist: false,
       capitalist: false,

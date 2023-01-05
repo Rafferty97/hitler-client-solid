@@ -1,3 +1,45 @@
 .Content {
   flex: 1 1 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.Connecting {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  padding: 1em 2em 1.15em;
+  line-height: 1;
+}
+
+.Scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Scene h1 {
+  font-size: 4vw;
+  font-family: 'Germania One', sans-serif;
+  text-transform: uppercase;
+  text-shadow: 0.1em 0.1em black;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.Scene p {
+  font-size: 1.5vw;
+  text-shadow: 0 1px 3px black;
+  line-height: 1.4;
+  margin: 1.5em 0 0;
 }

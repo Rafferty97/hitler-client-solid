@@ -3,6 +3,8 @@ import { executiveAction } from './executive-action'
 import { nonzeroInt } from './primative'
 import { party } from './role'
 
+export type BoardPrompt = z.infer<typeof boardPrompt>
+
 const nightPrompt = z.object({ type: z.literal('Night') })
 
 const electionPrompt = z.object({
@@ -17,13 +19,7 @@ const legislativeSessionPrompt = z.object({
   type: z.literal('LegislativeSession'),
   president: nonzeroInt(),
   chancellor: nonzeroInt(),
-  phase: z.enum([
-    'President',
-    'Chancellor',
-    'VetoRequested',
-    'VetoApproved',
-    'VetoRejected',
-  ]),
+  phase: z.enum(['President', 'Chancellor', 'VetoRequested', 'VetoApproved', 'VetoRejected']),
 })
 
 const cardRevealPrompt = z.object({
