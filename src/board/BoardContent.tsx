@@ -1,21 +1,66 @@
 import { Presence, Motion } from '@motionone/solid'
-import { Component, JSX, Match, Show, Switch } from 'solid-js'
+import { Component, createEffect, createSignal, JSX, Match, Show, Switch } from 'solid-js'
 import { GameState } from '../dm/state'
 import { Lobby } from './Lobby'
-import s from './BoardContent.module.css'
 import { BoardPrompt } from '../dm/board-prompt'
-import { PolicyTracker } from './PolicyTracker'
+import { CardReveal, PolicyCard, PolicyTracker } from './PolicyTracker'
+import { range } from '../util/range'
+import s from './BoardContent.module.css'
+import { Party } from '../dm/role'
 
 export const BoardContent: Component<{ state: GameState }> = props => {
+  let container: HTMLDivElement | undefined
+
   const numPlayers = () => props.state.players.length
-  const liberals = () => (props.state.state.type === 'board' ? props.state.state.liberal_cards : 0)
-  const fascists = () => (props.state.state.type === 'board' ? props.state.state.fascist_cards : 0)
+
+  const parties: Party[] = ['Liberal', 'Fascist']
+
+  const numPolicies = (party: Party) => {
+    if (props.state.state.type !== 'board') return 0
+    switch (party) {
+      case 'Liberal':
+        return props.state.state.liberal_cards
+      case 'Fascist':
+        return props.state.state.fascist_cards
+      case 'Communist':
+        return props.state.state.communist_cards ?? 0
+    }
+  }
+
+  const xy = (party: Party, index: number) => {
+    const numCards = party === 'Liberal' ? 5 : 6
+    const x = index - numCards / 2 + 0.5
+    const y = party === 'Liberal' ? -0.5 : 0.5
+    return { party, x, y }
+  }
+
+  const cardReveal = () => {
+    if (props.state.state.type !== 'board') return undefined
+    if (props.state.state.prompt?.type !== 'CardReveal') return undefined
+    const party = props.state.state.prompt.result
+    if (party == null) return undefined
+    return xy(party, numPolicies(party))
+  }
+
+  const [scale, setScale] = createSignal(1)
+  const observer = new ResizeObserver(entries => {
+    const w = 0.005 * (entries[0].contentRect.width - 80)
+    const h = 0.012 * (entries[0].contentRect.height - 120)
+    setScale(Math.min(w, h, 8))
+  })
+  createEffect(() => observer.observe(container!))
 
   return (
-    <div class={s.Content}>
+    <div class={s.Content} ref={container}>
       <div class={s.Board}>
-        <PolicyTracker party="Liberal" numPlayers={numPlayers()} count={liberals()} />
-        <PolicyTracker party="Fascist" numPlayers={numPlayers()} count={fascists()} />
+        <PolicyTracker party="Liberal" numPlayers={numPlayers()} scale={scale()} />
+        <PolicyTracker party="Fascist" numPlayers={numPlayers()} scale={scale()} />
+        {parties.map(party =>
+          range(0, numPolicies(party)).map(i => <PolicyCard {...xy(party, i)} scale={scale()} />)
+        )}
+        <Show when={cardReveal()}>
+          <CardReveal {...cardReveal()!} scale={scale()} />
+        </Show>
       </div>
 
       <Presence>

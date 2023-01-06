@@ -56,7 +56,7 @@ const ConsolePage: Component = () => {
   return (
     <div>
       <PrefetchImages />
-      <div style={{ position: 'relative', background: '#222', height: '600px', margin: '0 0 40px' }}>
+      <div style={{ position: 'relative', background: '#222', height: '650px', margin: '0 0 40px' }}>
         <BoardApp gameId={gameId()} onJoin={setGameId} />
       </div>
       <button onClick={() => ws.boardAction({ type: 'EndVoting' })}>End voting</button>

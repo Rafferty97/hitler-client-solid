@@ -3,21 +3,16 @@
 .PolicyTracker {
   background-color: black;
   display: flex;
-  padding: 18px 20px;
+  padding: 20px;
   box-sizing: border-box;
-  border-radius: 6px;
+  border-radius: 8px;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
-
-  margin: 20px;
 }
 
 .PolicyTracker .Tile {
   background-size: 90% auto;
   background-position: 50% 50%;
   flex: 1 1 0;
-
-  width: 150px;
-  height: 200px;
 }
 
 .PolicyTracker .Tile + .Tile {
@@ -50,4 +45,41 @@
 
 .Tile.kill-veto {
   background-image: url(../assets/board_kill_veto.png);
+}
+
+.PolicyCard {
+  position: absolute;
+  width: 150px;
+  height: 224px;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.PolicyCard .Front, .PolicyCard .Back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: 107% auto;
+  background-position: 50% 70%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+}
+
+.PolicyCard .Fascist {
+  background-image: url(../assets/fascist_article.png);
+}
+
+.PolicyCard .Communist {
+  background-image: url(../assets/communist_article.png);
+}
+
+.PolicyCard .Liberal {
+  background-image: url(../assets/liberal_article.png);
+}
+
+.PolicyCard .Back {
+  transform: rotateY(-180deg);
+  background-image: url(../assets/back_article.png);
 }
