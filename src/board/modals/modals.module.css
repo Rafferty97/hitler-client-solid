@@ -1,0 +1,129 @@
+.Scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Title {
+  font-size: 4vw;
+  font-family: 'Germania One', sans-serif;
+  text-transform: uppercase;
+  text-shadow: 0.1em 0.1em black;
+  letter-spacing: 0.05em;
+  margin: 0 0 9vh;
+}
+
+.Subtitle {
+  font-size: 1.5vw;
+  text-shadow: 0 1px 3px black;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.Government {
+  display: flex;
+  flex-direction: row;
+  margin: 0 60px;
+}
+
+.Government > div {
+  text-align: center;
+}
+
+.Government img {
+  display: block;
+  width: 70%;
+  margin: 20px auto;
+  border-radius: 4px;
+  box-shadow: 1px 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.VoteNow {
+  text-align: center;
+  font-size: 4vw;
+  font-family: 'Germania One', sans-serif;
+  transition: opacity 0.3s;
+  transform: scale(1);
+  text-transform: uppercase;
+  -webkit-text-stroke: 0.05em black;
+  text-shadow: 0 0 0.2em rgba(0, 0, 0, 0.3);
+  animation: growshrink 1s infinite;
+  margin-top: 9vh;
+}
+
+.VoteNow.hidden {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes growshrink {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.PlayerName {
+  background-color: black;
+  font-size: 3.6vw;
+  padding: 0.75vw 1.75vw;
+  display: inline-block;
+  border-radius: 8px;
+  font-family: 'Germania One', sans-serif;
+  margin: 40px 0;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+}
+
+.PlayerName.gov {
+  margin-top: -40px;
+  font-size: 2.8vw;
+}
+
+.VoteResult {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10000;
+}
+
+.VoteResult > div {
+  font-size: 8vw;
+  font-family: 'Germania One', sans-serif;
+  padding: 1vw 3vw;
+  box-shadow: 0 0 1vw rgba(0, 0, 0, 0.5);
+  border-radius: 0.5vw;
+}
+
+.VoteResult .nein {
+  background-color: black;
+  color: white;
+}
+
+.VoteResult .ja {
+  background-color: white;
+  color: black;
+}
+
+.VoteResult .veto {
+  background-color: #822;
+  color: white;
+}
+
+.StepFade {
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.StepFade.faded {
+  opacity: 0.75;
+  transform: scale(0.85);
+}

@@ -1,7 +1,11 @@
 import { Motion } from '@motionone/solid'
-import { Component, createEffect, createSignal } from 'solid-js'
+import { Component, createEffect, createSignal, onCleanup } from 'solid-js'
 import { Party } from '../dm/role'
 import s from './PolicyTracker.module.css'
+import drumroll from '../assets/sound/drum roll final.mp3'
+import liberalReveal from '../assets/sound/liberal card.mp3'
+import fascistReveal from '../assets/sound/fascist card.mp3'
+import { useSound } from '../util/hooks'
 
 interface PolicyTrackerProps {
   party: Party
@@ -46,14 +50,24 @@ export const PolicyCard: Component<PolicyCardProps> = props => {
   )
 }
 
-export const CardReveal: Component<PolicyCardProps> = props => {
+export const CardReveal: Component<PolicyCardProps & { onDone: () => void }> = props => {
   const [step, setStep] = createSignal(0)
 
   createEffect(() => {
     setTimeout(() => setStep(1), 100)
-    setTimeout(() => setStep(2), 2250)
-    setTimeout(() => setStep(3), 3500)
+    setTimeout(() => setStep(2), 2300)
+    setTimeout(() => setStep(3), 3800)
   })
+
+  createEffect(() => {
+    if (step() < 3) return
+    const int = setInterval(props.onDone, 2000)
+    onCleanup(() => clearInterval(int))
+  })
+
+  useSound(drumroll, () => step() === 1)
+  useSound(liberalReveal, () => step() === 2 && props.party === 'Liberal')
+  useSound(fascistReveal, () => step() === 2 && props.party === 'Fascist')
 
   const transform = () => {
     const x = (props.scale * 27 + 2) * props.x
@@ -66,7 +80,7 @@ export const CardReveal: Component<PolicyCardProps> = props => {
     ][step()]
   }
 
-  const duration = () => [0, 0.8, 0.4, 0.6][step()]
+  const duration = () => [0, 0.8, 0.35, 0.6][step()]
 
   return (
     <Motion.div

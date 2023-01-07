@@ -1,18 +1,26 @@
-import { Presence, Motion } from '@motionone/solid'
+import { Presence } from '@motionone/solid'
 import { Component, createEffect, createSignal, JSX, Match, Show, Switch } from 'solid-js'
-import { GameState } from '../dm/state'
-import { Lobby } from './Lobby'
+import { BoardState, GameState } from '../dm/state'
+import { Lobby } from './modals/Lobby'
 import { BoardPrompt } from '../dm/board-prompt'
 import { CardReveal, PolicyCard, PolicyTracker } from './PolicyTracker'
 import { range } from '../util/range'
-import s from './BoardContent.module.css'
 import { Party } from '../dm/role'
+import { NightRound } from './modals/NightRound'
+import { Election } from './modals/Election'
+import s from './BoardContent.module.css'
+import { BoardAction } from '../dm/action'
+import { LegislativeSession } from './modals/LegislativeSession'
 
-export const BoardContent: Component<{ state: GameState }> = props => {
+interface Props {
+  state: GameState
+  action: (action: BoardAction) => void
+}
+
+export const BoardContent: Component<Props> = props => {
   let container: HTMLDivElement | undefined
 
   const numPlayers = () => props.state.players.length
-
   const parties: Party[] = ['Liberal', 'Fascist']
 
   const numPolicies = (party: Party) => {
@@ -50,32 +58,44 @@ export const BoardContent: Component<{ state: GameState }> = props => {
   })
   createEffect(() => observer.observe(container!))
 
+  const fadeBoard = () => isPrompt(props.state, ['Election', 'LegislativeSession'])
+
   return (
     <div class={s.Content} ref={container}>
-      <div class={s.Board}>
+      <div class={`${s.Board} ${fadeBoard() ? s.fade : ''}`}>
         <PolicyTracker party="Liberal" numPlayers={numPlayers()} scale={scale()} />
         <PolicyTracker party="Fascist" numPlayers={numPlayers()} scale={scale()} />
         {parties.map(party =>
           range(0, numPolicies(party)).map(i => <PolicyCard {...xy(party, i)} scale={scale()} />)
         )}
         <Show when={cardReveal()}>
-          <CardReveal {...cardReveal()!} scale={scale()} />
+          <CardReveal
+            {...cardReveal()!}
+            scale={scale()}
+            onDone={() => props.action({ type: 'EndCardReveal' })}
+          />
         </Show>
       </div>
 
-      <Presence>
+      <Presence initial={false}>
         <Switch>
           <Match when={props.state.state.type === 'lobby'}>
-            <Scene>
-              <Lobby gameId={props.state.game_id} />
-            </Scene>
+            <Lobby gameId={props.state.game_id} />
           </Match>
 
           <Match when={isPrompt(props.state, 'Night')}>
-            <Scene>
-              <h1>Night round</h1>
-              <p>You have now been given your secret role</p>
-            </Scene>
+            <NightRound />
+          </Match>
+
+          <Match when={getElection(props.state)?.president} keyed>
+            <Election {...getElection(props.state)!} onDone={() => props.action({ type: 'EndVoting' })} />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'LegislativeSession')}>
+            <LegislativeSession
+              {...getLegislativeSession(props.state)!}
+              onDone={() => props.action({ type: 'EndLegislativeSession' })}
+            />
           </Match>
         </Switch>
       </Presence>
@@ -87,20 +107,30 @@ export const BoardContent: Component<{ state: GameState }> = props => {
   )
 }
 
-const Scene: Component<{ children: JSX.Element }> = props => (
-  <Motion.div
-    class={s.Scene}
-    initial={{ transform: 'translate(0, 100%)' }}
-    animate={{ transform: 'translate(0, 0%)' }}
-    exit={{ transform: 'translate(0, -100%)' }}
-    transition={{ duration: 1 }}
-  >
-    {props.children}
-  </Motion.div>
-)
-
 function isPrompt(state: GameState, prompt: BoardPrompt['type'] | BoardPrompt['type'][]) {
   if (state.state.type !== 'board') return false
   const prompts = Array.isArray(prompt) ? prompt : [prompt]
   return state.state.prompt && prompts.indexOf(state.state.prompt.type) !== -1
+}
+
+function getElection(state: GameState) {
+  if (state.state.type !== 'board') return undefined
+  if (state.state.prompt?.type !== 'Election') return undefined
+  const prompt = state.state.prompt
+  return {
+    president: state.players[prompt.president].name,
+    chancellor: prompt.chancellor != null ? state.players[prompt.chancellor].name : undefined,
+    outcome: prompt.outcome ?? undefined,
+  }
+}
+
+function getLegislativeSession(state: GameState) {
+  if (state.state.type !== 'board') return undefined
+  if (state.state.prompt?.type !== 'LegislativeSession') return undefined
+  const prompt = state.state.prompt
+  return {
+    president: state.players[prompt.president].name,
+    chancellor: state.players[prompt.chancellor].name,
+    phase: prompt.phase,
+  }
 }

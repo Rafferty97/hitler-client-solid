@@ -25,32 +25,9 @@
   padding: 20px;
   box-sizing: border-box;
   perspective: 800px;
+  transition: opacity 0.75s;
 }
 
-.Scene {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.Scene h1 {
-  font-size: 4vw;
-  font-family: 'Germania One', sans-serif;
-  text-transform: uppercase;
-  text-shadow: 0.1em 0.1em black;
-  letter-spacing: 0.05em;
-  margin: 0;
-}
-
-.Scene p {
-  font-size: 1.5vw;
-  text-shadow: 0 1px 3px black;
-  line-height: 1.4;
-  margin: 1.5em 0 0;
+.Board.fade {
+  opacity: 0.15;
 }

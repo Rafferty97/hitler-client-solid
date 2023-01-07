@@ -48,7 +48,7 @@ export const BoardApp: Component<Props> = props => {
         </Match>
         <Match when={ws.state()}>
           <div class={s.Board}>
-            <BoardContent state={ws.state()!} />
+            <BoardContent state={ws.state()!} action={ws.boardAction} />
             <PlayerRail state={ws.state()!} />
           </div>
         </Match>

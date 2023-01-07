@@ -43,7 +43,7 @@ export const PlayerApp: Component<Props> = props => {
       <div class={s.Container}>
         <Switch>
           <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
-            <JoinGame name={props.name} join={ws.joinAsPlayer} />
+            <JoinGame gameId={props.gameId} name={props.name} join={ws.joinAsPlayer} />
           </Match>
           <Match when={isError(ws.state())} keyed>
             {error => (
