@@ -11,7 +11,7 @@
 }
 
 .Title {
-  font-size: 4vw;
+  font-size: 3.8vw;
   font-family: 'Germania One', sans-serif;
   text-transform: uppercase;
   text-shadow: 0.1em 0.1em black;
@@ -20,10 +20,21 @@
 }
 
 .Subtitle {
-  font-size: 1.5vw;
+  position: relative;
+  font-size: 1.4vw;
   text-shadow: 0 1px 3px black;
   line-height: 1.4;
-  margin: 0;
+  margin: 1em 0;
+  width: 80%;
+  text-align: center;
+}
+
+.Subtitle div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
 }
 
 .Government {
@@ -120,7 +131,7 @@
 }
 
 .StepFade {
-  transition: opacity 0.5s, transform 0.5s;
+  transition: opacity 0.4s, transform 0.4s;
 }
 
 .StepFade.faded {

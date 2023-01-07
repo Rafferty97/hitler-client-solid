@@ -1,11 +1,16 @@
 import { Motion } from '@motionone/solid'
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js'
 import { Party } from '../dm/role'
-import s from './PolicyTracker.module.css'
-import drumroll from '../assets/sound/drum roll final.mp3'
-import liberalReveal from '../assets/sound/liberal card.mp3'
-import fascistReveal from '../assets/sound/fascist card.mp3'
 import { useSound } from '../util/hooks'
+import { sound } from '../util/sound'
+import s from './PolicyTracker.module.css'
+import drumrollUrl from '../assets/sound/drum roll final.mp3'
+import liberalRevealUrl from '../assets/sound/liberal card.mp3'
+import fascistRevealUrl from '../assets/sound/fascist card.mp3'
+
+const drumroll = sound(drumrollUrl, 0.85)
+const liberalReveal = sound(liberalRevealUrl, 0.9)
+const fascistReveal = sound(fascistRevealUrl, 0.9)
 
 interface PolicyTrackerProps {
   party: Party
@@ -14,7 +19,7 @@ interface PolicyTrackerProps {
 }
 
 export const PolicyTracker: Component<PolicyTrackerProps> = props => {
-  const tiles: Tile[] = getTiles(props.party, props.numPlayers)
+  const tiles = () => getTiles(props.party, props.numPlayers)
 
   const style = () => ({
     width: props.scale * 27 + 'px',
@@ -23,7 +28,7 @@ export const PolicyTracker: Component<PolicyTrackerProps> = props => {
 
   return (
     <div class={s.PolicyTracker} style={{ margin: 3 * props.scale + 'px 0' }}>
-      {tiles.map(tile => (
+      {tiles().map(tile => (
         <div class={`${s.Tile} ${s[tile]}`} style={style()} />
       ))}
     </div>
@@ -54,9 +59,9 @@ export const CardReveal: Component<PolicyCardProps & { onDone: () => void }> = p
   const [step, setStep] = createSignal(0)
 
   createEffect(() => {
-    setTimeout(() => setStep(1), 100)
-    setTimeout(() => setStep(2), 2300)
-    setTimeout(() => setStep(3), 3800)
+    setTimeout(() => setStep(1), 300)
+    setTimeout(() => setStep(2), 2700)
+    setTimeout(() => setStep(3), 4300)
   })
 
   createEffect(() => {
@@ -73,7 +78,7 @@ export const CardReveal: Component<PolicyCardProps & { onDone: () => void }> = p
     const x = (props.scale * 27 + 2) * props.x
     const y = (props.scale * 43 + 40) * props.y
     return [
-      `scale(${0.32 * props.scale}) translate(0, ${80 * props.scale}px) rotateY(180deg)`,
+      `scale(${0.32 * props.scale}) translate(0, 80vh) rotateY(180deg)`,
       `scale(${0.32 * props.scale}) rotateY(180deg)`,
       `scale(${0.32 * props.scale})`,
       `translate(${x}px, ${y}px) scale(${0.16 * props.scale})`,
@@ -104,6 +109,12 @@ export type Tile =
   | 'election'
   | 'investigate'
   | 'fascist-win'
+  | 'bugging'
+  | 'radicalisation'
+  | 'fiveyearplan'
+  | 'congress'
+  | 'confession'
+  | 'communist-win'
 
 function getTiles(party: Party, numPlayers: number): Tile[] {
   if (party === 'Liberal') {
@@ -117,6 +128,13 @@ function getTiles(party: Party, numPlayers: number): Tile[] {
       return ['empty', 'investigate', 'election', 'kill', 'kill-veto', 'fascist-win']
     }
     return ['investigate', 'investigate', 'election', 'kill', 'kill-veto', 'fascist-win']
+  }
+  if (party === 'Communist') {
+    if (numPlayers < 8) {
+      return ['empty', 'empty', 'empty', 'empty', 'communist-win']
+    } else {
+      return ['empty', 'empty', 'empty', 'empty', 'empty', 'communist-win']
+    }
   }
   return []
 }

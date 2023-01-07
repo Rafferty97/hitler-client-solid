@@ -1,6 +1,6 @@
 import { Presence } from '@motionone/solid'
-import { Component, createEffect, createSignal, JSX, Match, Show, Switch } from 'solid-js'
-import { BoardState, GameState } from '../dm/state'
+import { Component, createEffect, createMemo, createSignal, JSX, Match, Show, Switch } from 'solid-js'
+import { GameState } from '../dm/state'
 import { Lobby } from './modals/Lobby'
 import { BoardPrompt } from '../dm/board-prompt'
 import { CardReveal, PolicyCard, PolicyTracker } from './PolicyTracker'
@@ -8,9 +8,19 @@ import { range } from '../util/range'
 import { Party } from '../dm/role'
 import { NightRound } from './modals/NightRound'
 import { Election } from './modals/Election'
-import s from './BoardContent.module.css'
 import { BoardAction } from '../dm/action'
 import { LegislativeSession } from './modals/LegislativeSession'
+import { useDynamicSound } from '../util/hooks'
+import { sound } from '../util/sound'
+import { ExecutiveAction } from './modals/ExecutiveAction'
+import s from './BoardContent.module.css'
+import bkmusicUrl from '../assets/sound/moonlight.mp3'
+import tensionUrl from '../assets/sound/tension.mp3'
+import executionUrl from '../assets/sound/player death.mp3'
+
+const bkmusic = sound(bkmusicUrl, 0.8, true)
+const tension = sound(tensionUrl, 0.4, true)
+const execution = sound(executionUrl)
 
 interface Props {
   state: GameState
@@ -21,7 +31,13 @@ export const BoardContent: Component<Props> = props => {
   let container: HTMLDivElement | undefined
 
   const numPlayers = () => props.state.players.length
-  const parties: Party[] = ['Liberal', 'Fascist']
+  const parties = createMemo<Party[]>(() => {
+    if (props.state.state.type === 'board' && props.state.state.communist_cards != null) {
+      return ['Liberal', 'Fascist', 'Communist']
+    } else {
+      return ['Liberal', 'Fascist']
+    }
+  })
 
   const numPolicies = (party: Party) => {
     if (props.state.state.type !== 'board') return 0
@@ -36,9 +52,10 @@ export const BoardContent: Component<Props> = props => {
   }
 
   const xy = (party: Party, index: number) => {
-    const numCards = party === 'Liberal' ? 5 : 6
+    const numCards = trackLength(party, numPlayers())
     const x = index - numCards / 2 + 0.5
-    const y = party === 'Liberal' ? -0.5 : 0.5
+    const numTrackers = parties().length
+    const y = parties().indexOf(party) - numTrackers / 2 + 0.5
     return { party, x, y }
   }
 
@@ -50,32 +67,53 @@ export const BoardContent: Component<Props> = props => {
     return xy(party, numPolicies(party))
   }
 
-  const [scale, setScale] = createSignal(1)
-  const observer = new ResizeObserver(entries => {
-    const w = 0.005 * (entries[0].contentRect.width - 80)
-    const h = 0.012 * (entries[0].contentRect.height - 120)
-    setScale(Math.min(w, h, 8))
-  })
+  const [rect, setRect] = createSignal({ width: 1000, height: 500 })
+  const observer = new ResizeObserver(entries => setRect(entries[0].contentRect))
   createEffect(() => observer.observe(container!))
 
-  const fadeBoard = () => isPrompt(props.state, ['Election', 'LegislativeSession'])
+  const scale = createMemo(() => {
+    const w = 0.005 * (rect().width - 80)
+    const h = (0.022 * (rect().height - 120)) / parties().length
+    return Math.min(w, h, 8)
+  })
+
+  const fadeBoard = () =>
+    isPrompt(props.state, [
+      'Night',
+      'Election',
+      'LegislativeSession',
+      'PolicyPeak',
+      'InvestigatePlayer',
+      'SpecialElection',
+      'Execution',
+    ])
+
+  useDynamicSound(() => {
+    if (isPrompt(props.state, 'LegislativeSession')) {
+      return tension
+    }
+    return bkmusic
+  })
 
   return (
     <div class={s.Content} ref={container}>
-      <div class={`${s.Board} ${fadeBoard() ? s.fade : ''}`}>
-        <PolicyTracker party="Liberal" numPlayers={numPlayers()} scale={scale()} />
-        <PolicyTracker party="Fascist" numPlayers={numPlayers()} scale={scale()} />
-        {parties.map(party =>
-          range(0, numPolicies(party)).map(i => <PolicyCard {...xy(party, i)} scale={scale()} />)
-        )}
-        <Show when={cardReveal()}>
-          <CardReveal
-            {...cardReveal()!}
-            scale={scale()}
-            onDone={() => props.action({ type: 'EndCardReveal' })}
-          />
-        </Show>
-      </div>
+      <Show when={props.state.state.type === 'board'}>
+        <div class={`${s.Board} ${fadeBoard() ? s.fade : ''}`}>
+          {parties().map(party => (
+            <PolicyTracker party={party} numPlayers={numPlayers()} scale={scale()} />
+          ))}
+          {parties().map(party =>
+            range(0, numPolicies(party)).map(i => <PolicyCard {...xy(party, i)} scale={scale()} />)
+          )}
+          <Show when={cardReveal()}>
+            <CardReveal
+              {...cardReveal()!}
+              scale={scale()}
+              onDone={() => props.action({ type: 'EndCardReveal' })}
+            />
+          </Show>
+        </div>
+      </Show>
 
       <Presence initial={false}>
         <Switch>
@@ -95,6 +133,41 @@ export const BoardContent: Component<Props> = props => {
             <LegislativeSession
               {...getLegislativeSession(props.state)!}
               onDone={() => props.action({ type: 'EndLegislativeSession' })}
+            />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'PolicyPeak')}>
+            <ExecutiveAction
+              title="Policy Peak"
+              subtitle="The president must now inspect the top three policy cards"
+            />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'InvestigatePlayer')}>
+            <ExecutiveAction
+              title="Investigate Player"
+              subtitle="The president must now inspect the loyalty of one player"
+              player={getChosenPlayer(props.state)}
+            />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'SpecialElection')}>
+            <ExecutiveAction
+              title="Special Election"
+              subtitle="The president must now nomimate their successor"
+              player={getChosenPlayer(props.state)}
+              onDone={() => props.action({ type: 'EndExecutiveAction' })}
+            />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'Execution')}>
+            <ExecutiveAction
+              title="Execution"
+              subtitle="The president must now execute a player"
+              sound={execution}
+              player={getChosenPlayer(props.state)}
+              timeout={5500}
+              onDone={() => props.action({ type: 'EndExecutiveAction' })}
             />
           </Match>
         </Switch>
@@ -133,4 +206,23 @@ function getLegislativeSession(state: GameState) {
     chancellor: state.players[prompt.chancellor].name,
     phase: prompt.phase,
   }
+}
+
+function getChosenPlayer(state: GameState) {
+  if (state.state.type !== 'board') return undefined
+  let player
+  if (state.state.prompt?.type === 'InvestigatePlayer') {
+    player = state.state.prompt.chosen_player
+  }
+  if (state.state.prompt?.type === 'SpecialElection') {
+    player = state.state.prompt.chosen_player
+  }
+  if (state.state.prompt?.type === 'Execution') {
+    player = state.state.prompt.chosen_player
+  }
+  return player != null ? state.players[player].name : undefined
+}
+
+function trackLength(party: Party, numPlayers: number): number {
+  return party === 'Fascist' || (party === 'Communist' && numPlayers > 7) ? 6 : 5
 }

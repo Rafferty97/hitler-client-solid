@@ -1,4 +1,4 @@
-import { Component, createEffect, onCleanup, Show } from 'solid-js'
+import { Component, createEffect, For, onCleanup, Show } from 'solid-js'
 import { Scene } from './Scene'
 import { useDelay, useSound } from '../../util/hooks'
 import { PlayerName } from './PlayerName'
@@ -10,6 +10,8 @@ import chancellor from '../../assets/chancellor.png'
 import vetoRequest from '../../assets/sound/veto call.mp3'
 import vetoApproved from '../../assets/sound/veto pass.mp3'
 import vetoRejected from '../../assets/sound/veto rejected.mp3'
+import { AnimatedSubtitle } from './AnimatedSubtitle'
+import { sound } from '../../util/sound'
 
 interface Props {
   president: string
@@ -34,9 +36,9 @@ export const LegislativeSession: Component<Props> = props => {
     }
   })
 
-  useSound(vetoRequest, () => props.phase === 'VetoRequested')
-  useSound(vetoApproved, () => props.phase === 'VetoApproved')
-  useSound(vetoRejected, () => props.phase === 'VetoRejected')
+  useSound(sound(vetoRequest), () => props.phase === 'VetoRequested')
+  useSound(sound(vetoApproved), () => props.phase === 'VetoApproved')
+  useSound(sound(vetoRejected), () => props.phase === 'VetoRejected')
 
   return (
     <Scene>
@@ -52,6 +54,7 @@ export const LegislativeSession: Component<Props> = props => {
         </div>
       </div>
       <VetoResult vetoed={props.phase === 'VetoApproved'} />
+      <AnimatedSubtitle text={getDescription(props.phase)} />
     </Scene>
   )
 }
@@ -73,4 +76,19 @@ const VetoResult: Component<{ vetoed: boolean }> = props => {
       </Presence>
     </div>
   )
+}
+
+function getDescription(phase: LegislativeSessionPhase) {
+  switch (phase) {
+    case 'President':
+      return 'The president is discarding a policy.'
+    case 'Chancellor':
+      return 'The chancellor is discarding a policy.'
+    case 'VetoRequested':
+      return 'The chancellor has called for a veto!'
+    case 'VetoRejected':
+      return 'The president has rejected the veto. The chancellor must discard a policy.'
+    case 'VetoApproved':
+      return 'The agenda has been vetoed!'
+  }
 }

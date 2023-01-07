@@ -35,28 +35,27 @@ export function useDelay(value: Accessor<boolean>, delay: number): Accessor<bool
 //   return output
 // }
 
-export function useSound(url: string, play: Accessor<boolean>) {
+export function useSound(audio: HTMLAudioElement, play: Accessor<boolean>) {
   const play_ = createMemo(play)
-  const sound = new Audio(url)
   createEffect(() => {
     if (!play_()) return
-    sound.play()
+    audio.play()
     onCleanup(() => {
-      sound.pause()
-      sound.currentTime = 0
+      audio.pause()
+      audio.currentTime = 0
     })
   })
 }
 
-export function useDynamicSound(url: Accessor<string | undefined>) {
-  const url_ = createMemo(url)
+export function useDynamicSound(audio: Accessor<HTMLAudioElement | undefined>) {
+  const audio_ = createMemo(audio)
   createEffect(() => {
-    if (!url_()) return
-    const sound = new Audio(url_())
-    sound.play()
+    const audio = audio_()
+    if (!audio) return
+    audio.play()
     onCleanup(() => {
-      sound.pause()
-      sound.currentTime = 0
+      audio.pause()
+      audio.currentTime = 0
     })
   })
 }

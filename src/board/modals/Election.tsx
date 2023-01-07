@@ -3,14 +3,23 @@ import { Scene } from './Scene'
 import { useDelay, useDynamicSound, useSound } from '../../util/hooks'
 import { PlayerName } from './PlayerName'
 import { Motion, Presence } from '@motionone/solid'
+import { sound } from '../../util/sound'
 import s from './modals.module.css'
 import president from '../../assets/president.png'
 import chancellor from '../../assets/chancellor.png'
-import jaSound1 from '../../assets/sound/ja1.mp3'
-import jaSound2 from '../../assets/sound/ja2.mp3'
-import neinSound1 from '../../assets/sound/nein1.mp3'
-import neinSound2 from '../../assets/sound/nein2.mp3'
-import castVote from '../../assets/sound/cast-vote.mp3'
+import electChancellorUrl from '../../assets/sound/elect a chancellor.mp3'
+import jaSound1Url from '../../assets/sound/ja1.mp3'
+import jaSound2Url from '../../assets/sound/ja2.mp3'
+import neinSound1Url from '../../assets/sound/nein1.mp3'
+import neinSound2Url from '../../assets/sound/nein2.mp3'
+import castVoteUrl from '../../assets/sound/cast-vote.mp3'
+
+const electChancellor = sound(electChancellorUrl)
+const jaSound1 = sound(jaSound1Url)
+const jaSound2 = sound(jaSound2Url)
+const neinSound1 = sound(neinSound1Url)
+const neinSound2 = sound(neinSound2Url)
+const castVote = sound(castVoteUrl)
 
 interface Props {
   president: string
@@ -25,6 +34,7 @@ export const Election: Component<Props> = props => {
   const showChancellorAfter = useDelay(showChancellor, 1000)
   const showVoting = () => showChancellorAfter() && props.outcome == null
 
+  useSound(electChancellor, () => showPresident() && props.chancellor == null)
   useSound(castVote, showVoting)
 
   const outcome = createMemo(() => props.outcome)

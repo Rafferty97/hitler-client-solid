@@ -5,8 +5,19 @@ import communistPolicy from '../assets/communist_article.png'
 import liberalParty from '../assets/liberal_party.png'
 import fascistParty from '../assets/fascist_party.png'
 import communistParty from '../assets/communist_party.png'
+import president from '../assets/president.png'
+import chancellor from '../assets/chancellor.png'
 
-const images = [liberalPolicy, fascistPolicy, communistPolicy, liberalParty, fascistParty, communistParty]
+const images = [
+  liberalPolicy,
+  fascistPolicy,
+  communistPolicy,
+  liberalParty,
+  fascistParty,
+  communistParty,
+  president,
+  chancellor,
+]
 
 export const PrefetchImages: Component = () => {
   createEffect(() => {
