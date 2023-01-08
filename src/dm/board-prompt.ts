@@ -81,6 +81,12 @@ const monarchistElectionPrompt = z.object({
   outcome: z.boolean().nullable(),
 })
 
+const confessionPrompt = z.object({
+  type: z.literal('Confession'),
+  chosen_player: nonzeroInt().nullable(),
+  party: party.nullable(),
+})
+
 const gameOverPrompt = z.object({
   type: z.literal('GameOver'),
   outcome: z.enum([
@@ -106,5 +112,6 @@ export const boardPrompt = z.discriminatedUnion('type', [
   policyPeakPrompt,
   fiveYearPlanPrompt,
   monarchistElectionPrompt,
+  confessionPrompt,
   gameOverPrompt,
 ])

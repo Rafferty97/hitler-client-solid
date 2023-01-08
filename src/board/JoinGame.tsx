@@ -1,4 +1,4 @@
-import { Component, createSignal } from 'solid-js'
+import { Component, createEffect, createSignal, Signal } from 'solid-js'
 import { Error } from '../components/Error'
 import { Button } from '../player/Button'
 import { validateGameId } from '../validate'
@@ -23,10 +23,12 @@ export const JoinGame: Component<Props> = props => {
     if (gameId_) props.join(gameId_)
   }
 
+  const [communists, setCommunists] = createSignal(false)
+
   const createGame = (ev: Event) => {
     ev.preventDefault()
     props.createGame({
-      communists: false,
+      communists: communists(),
       monarchist: false,
       anarchist: false,
       capitalist: false,
@@ -56,9 +58,23 @@ export const JoinGame: Component<Props> = props => {
       <div class={s.Column}>
         <h2>Create game</h2>
         <form onSubmit={createGame}>
+          <Checkbox label="Communists" value={communists()} onChange={setCommunists} />
           <Button submit label="Create game" />
         </form>
       </div>
     </div>
+  )
+}
+
+const Checkbox: Component<{ label: string; value: boolean; onChange: (value: boolean) => void }> = props => {
+  return (
+    <label>
+      <input
+        type="checkbox"
+        onChange={ev => props.onChange((ev.target as HTMLInputElement).checked)}
+        checked={props.value}
+      />
+      {props.label}
+    </label>
   )
 }

@@ -1,3 +1,4 @@
+- Consistent spacing in ".Message"
 - Night round UI
 - Secret role persistent UI
 - Game over screens
@@ -5,6 +6,7 @@
   - Dead
   - Not hitler
   - Vote
+  - President and chancellor
 - Choas
 - Board join/create game UI
 - How to fit 10+ players on the screen
@@ -12,3 +14,4 @@
 - Hitler zone warning
 - Resume game button
 - XL
+  - Anarchist, interaction with special election, etc.

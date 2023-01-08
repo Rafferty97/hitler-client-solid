@@ -7,9 +7,6 @@ import { PrefetchImages } from '../components/Prefetch'
 import { BoardApp } from '../board/BoardApp'
 
 /*
-  TODO: Anarchist, interaction with special election, etc.
-  TODO: Consistent spacing in ".Message"
-
   Centrist = 7 or more
   Monarchist (if you do it) = 8 or more
   Capitalist & Anarchist = 9 or more
@@ -35,7 +32,7 @@ const ConsolePage: Component = () => {
     if (gameId_) setGameId(gameId_)
   })
 
-  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'EDDY'] //, 'FRED', 'GEORGE', 'IJ', 'JACK', 'KAREN']
+  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'EDDY', 'FRED', 'GEORGE', 'IJ'] //, 'JACK', 'KAREN']
 
   const noop = () => {}
 

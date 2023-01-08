@@ -1,6 +1,6 @@
 import { Presence } from '@motionone/solid'
 import { Component, createEffect, createMemo, createSignal, JSX, Match, Show, Switch } from 'solid-js'
-import { GameState } from '../dm/state'
+import { BoardState, GameState } from '../dm/state'
 import { Lobby } from './modals/Lobby'
 import { BoardPrompt } from '../dm/board-prompt'
 import { CardReveal, PolicyCard, PolicyTracker } from './PolicyTracker'
@@ -21,6 +21,8 @@ import policyPeekUrl from '../assets/sound/policy peek.mp3'
 import specialElectionUrl from '../assets/sound/special election.mp3'
 import executionUrl from '../assets/sound/execute player.mp3'
 import gunshotUrl from '../assets/sound/player death.mp3'
+import { Scene } from './modals/Scene'
+import { CommunistSession } from './modals/CommunistSession'
 
 const bkmusic = sound(bkmusicUrl, 0.8, true)
 const tension = sound(tensionUrl, 0.4, true)
@@ -38,14 +40,17 @@ interface Props {
 export const BoardContent: Component<Props> = props => {
   let container: HTMLDivElement | undefined
 
-  const numPlayers = () => props.state.players.length
-  const parties = createMemo<Party[]>(() => {
-    if (props.state.state.type === 'board' && props.state.state.communist_cards != null) {
+  const numPlayers = createMemo(() => props.state.players.length)
+  const communists = createMemo(
+    () => props.state.state.type === 'board' && props.state.state.communist_cards != null
+  )
+  const parties = () => {
+    if (communists()) {
       return ['Liberal', 'Fascist', 'Communist']
     } else {
       return ['Liberal', 'Fascist']
     }
-  })
+  }
 
   const numPolicies = (party: Party) => {
     if (props.state.state.type !== 'board') return 0
@@ -94,6 +99,8 @@ export const BoardContent: Component<Props> = props => {
       'InvestigatePlayer',
       'SpecialElection',
       'Execution',
+      'CommunistSession',
+      'FiveYearPlan',
     ])
 
   useDynamicSound(() => {
@@ -180,6 +187,32 @@ export const BoardContent: Component<Props> = props => {
               player={getChosenPlayer(props.state)}
               timeout={5500}
               onDone={() => props.action({ type: 'EndExecutiveAction' })}
+            />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'CommunistSession')}>
+            <CommunistSession
+              state={props.state}
+              onEntered={() => props.action({ type: 'EndCommunistStart' })}
+              onExited={() => props.action({ type: 'EndCommunistEnd' })}
+            />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'FiveYearPlan')}>
+            <ExecutiveAction
+              title="Five Year Plan"
+              subtitle="Two communist policies and one liberal policy have been shuffled into the deck"
+              noPlayer
+              timeout={5000}
+              onDone={() => props.action({ type: 'EndExecutiveAction' })}
+            />
+          </Match>
+
+          <Match when={isPrompt(props.state, 'Confession')}>
+            <CommunistSession
+              state={props.state}
+              onEntered={() => props.action({ type: 'EndCommunistStart' })}
+              onExited={() => props.action({ type: 'EndCommunistEnd' })}
             />
           </Match>
         </Switch>

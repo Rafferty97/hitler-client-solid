@@ -8,6 +8,7 @@ interface Props {
   title: string
   subtitle: string
   player?: string
+  noPlayer?: boolean
   introSound?: HTMLAudioElement
   actionSound?: HTMLAudioElement
   timeout?: number
@@ -16,7 +17,8 @@ interface Props {
 
 export const ExecutiveAction: Component<Props> = props => {
   createEffect(() => {
-    if (props.player == null || !props.onDone) return
+    if (!props.onDone) return
+    if (props.player == null && props.noPlayer !== true) return
     const int = setInterval(props.onDone, props.timeout ?? 3000)
     onCleanup(() => clearInterval(int))
   })

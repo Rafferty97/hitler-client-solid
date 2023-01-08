@@ -27,7 +27,7 @@ export const PolicyTracker: Component<PolicyTrackerProps> = props => {
   })
 
   return (
-    <div class={s.PolicyTracker} style={{ margin: 3 * props.scale + 'px 0' }}>
+    <div class={`${s.PolicyTracker} ${s[props.party]}`} style={{ margin: 3 * props.scale + 'px 0' }}>
       {tiles().map(tile => (
         <div class={`${s.Tile} ${s[tile]}`} style={style()} />
       ))}
@@ -73,6 +73,7 @@ export const CardReveal: Component<PolicyCardProps & { onDone: () => void }> = p
   useSound(drumroll, () => step() === 1)
   useSound(liberalReveal, () => step() === 2 && props.party === 'Liberal')
   useSound(fascistReveal, () => step() === 2 && props.party === 'Fascist')
+  useSound(fascistReveal, () => step() === 2 && props.party === 'Communist')
 
   const transform = () => {
     const x = (props.scale * 27 + 2) * props.x
@@ -131,9 +132,9 @@ function getTiles(party: Party, numPlayers: number): Tile[] {
   }
   if (party === 'Communist') {
     if (numPlayers < 8) {
-      return ['empty', 'empty', 'empty', 'empty', 'communist-win']
+      return ['bugging', 'radicalisation', 'fiveyearplan', 'congress', 'communist-win']
     } else {
-      return ['empty', 'empty', 'empty', 'empty', 'empty', 'communist-win']
+      return ['bugging', 'radicalisation', 'fiveyearplan', 'congress', 'confession', 'communist-win']
     }
   }
   return []
