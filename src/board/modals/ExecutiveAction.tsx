@@ -8,7 +8,8 @@ interface Props {
   title: string
   subtitle: string
   player?: string
-  sound?: HTMLAudioElement
+  introSound?: HTMLAudioElement
+  actionSound?: HTMLAudioElement
   timeout?: number
   onDone?: () => void
 }
@@ -20,9 +21,14 @@ export const ExecutiveAction: Component<Props> = props => {
     onCleanup(() => clearInterval(int))
   })
 
-  if (props.sound) {
+  if (props.introSound) {
+    const playSound = useDelay(() => props.player == null || !props.actionSound, 1000)
+    useSound(props.introSound, playSound)
+  }
+
+  if (props.actionSound) {
     const playSound = useDelay(() => props.player != null, 750)
-    useSound(props.sound, playSound)
+    useSound(props.actionSound, playSound)
   }
 
   return (

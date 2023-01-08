@@ -1,17 +1,23 @@
 import { Component, createEffect, For, onCleanup, Show } from 'solid-js'
 import { Scene } from './Scene'
-import { useDelay, useSound } from '../../util/hooks'
+import { useSound } from '../../util/hooks'
 import { PlayerName } from './PlayerName'
 import { Motion, Presence } from '@motionone/solid'
 import { LegislativeSessionPhase } from '../../dm/board-prompt'
+import { AnimatedSubtitle } from './AnimatedSubtitle'
+import { sound } from '../../util/sound'
 import s from './modals.module.css'
 import president from '../../assets/president.png'
 import chancellor from '../../assets/chancellor.png'
-import vetoRequest from '../../assets/sound/veto call.mp3'
-import vetoApproved from '../../assets/sound/veto pass.mp3'
-import vetoRejected from '../../assets/sound/veto rejected.mp3'
-import { AnimatedSubtitle } from './AnimatedSubtitle'
-import { sound } from '../../util/sound'
+import remainSilentUrl from '../../assets/sound/remain silent.mp3'
+import vetoRequestUrl from '../../assets/sound/veto call.mp3'
+import vetoApprovedUrl from '../../assets/sound/veto pass.mp3'
+import vetoRejectedUrl from '../../assets/sound/veto rejected.mp3'
+
+const remainSilent = sound(remainSilentUrl)
+const vetoRequest = sound(vetoRequestUrl)
+const vetoApproved = sound(vetoApprovedUrl)
+const vetoRejected = sound(vetoRejectedUrl)
 
 interface Props {
   president: string
@@ -36,9 +42,10 @@ export const LegislativeSession: Component<Props> = props => {
     }
   })
 
-  useSound(sound(vetoRequest), () => props.phase === 'VetoRequested')
-  useSound(sound(vetoApproved), () => props.phase === 'VetoApproved')
-  useSound(sound(vetoRejected), () => props.phase === 'VetoRejected')
+  useSound(remainSilent, () => props.phase === 'President' || props.phase === 'Chancellor')
+  useSound(vetoRequest, () => props.phase === 'VetoRequested')
+  useSound(vetoApproved, () => props.phase === 'VetoApproved')
+  useSound(vetoRejected, () => props.phase === 'VetoRejected')
 
   return (
     <Scene>

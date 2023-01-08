@@ -16,11 +16,19 @@ import { ExecutiveAction } from './modals/ExecutiveAction'
 import s from './BoardContent.module.css'
 import bkmusicUrl from '../assets/sound/moonlight.mp3'
 import tensionUrl from '../assets/sound/tension.mp3'
-import executionUrl from '../assets/sound/player death.mp3'
+import investigateUrl from '../assets/sound/investigate player.mp3'
+import policyPeekUrl from '../assets/sound/policy peek.mp3'
+import specialElectionUrl from '../assets/sound/special election.mp3'
+import executionUrl from '../assets/sound/execute player.mp3'
+import gunshotUrl from '../assets/sound/player death.mp3'
 
 const bkmusic = sound(bkmusicUrl, 0.8, true)
 const tension = sound(tensionUrl, 0.4, true)
+const investigate = sound(investigateUrl)
+const policyPeek = sound(policyPeekUrl)
+const specialElection = sound(specialElectionUrl)
 const execution = sound(executionUrl)
+const gunshot = sound(gunshotUrl)
 
 interface Props {
   state: GameState
@@ -140,6 +148,7 @@ export const BoardContent: Component<Props> = props => {
             <ExecutiveAction
               title="Policy Peak"
               subtitle="The president must now inspect the top three policy cards"
+              introSound={policyPeek}
             />
           </Match>
 
@@ -147,6 +156,7 @@ export const BoardContent: Component<Props> = props => {
             <ExecutiveAction
               title="Investigate Player"
               subtitle="The president must now inspect the loyalty of one player"
+              introSound={investigate}
               player={getChosenPlayer(props.state)}
             />
           </Match>
@@ -155,6 +165,7 @@ export const BoardContent: Component<Props> = props => {
             <ExecutiveAction
               title="Special Election"
               subtitle="The president must now nomimate their successor"
+              introSound={specialElection}
               player={getChosenPlayer(props.state)}
               onDone={() => props.action({ type: 'EndExecutiveAction' })}
             />
@@ -164,7 +175,8 @@ export const BoardContent: Component<Props> = props => {
             <ExecutiveAction
               title="Execution"
               subtitle="The president must now execute a player"
-              sound={execution}
+              introSound={execution}
+              actionSound={gunshot}
               player={getChosenPlayer(props.state)}
               timeout={5500}
               onDone={() => props.action({ type: 'EndExecutiveAction' })}

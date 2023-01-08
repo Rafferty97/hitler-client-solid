@@ -10,23 +10,50 @@
   justify-content: center;
 }
 
+.RoomCode {
+  font-size: 78px;
+  font-weight: bold;
+  color: #ffbb44;
+  line-height: 1;
+  margin: 0;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+.QrCode {
+  width: 20%;
+  min-width: 200px;
+  border-radius: 8px;
+  margin: 10px 0;
+  box-shadow: 0 2px 12px black;
+}
+
 .Title {
   font-size: 3.8vw;
   font-family: 'Germania One', sans-serif;
   text-transform: uppercase;
   text-shadow: 0.1em 0.1em black;
   letter-spacing: 0.05em;
-  margin: 0 0 9vh;
+  margin: 0 0 8vh;
 }
 
 .Subtitle {
   position: relative;
-  font-size: 1.4vw;
+  font-size: 1.5vw;
   text-shadow: 0 1px 3px black;
   line-height: 1.4;
   margin: 1em 0;
   width: 80%;
   text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .Title {
+    font-size: 46px;
+  }
+
+  .Subtitle {
+    font-size: 18px;
+  }
 }
 
 .Subtitle div {
@@ -35,6 +62,11 @@
   left: 0;
   right: 0;
   text-align: center;
+}
+
+.Subtitle strong {
+  font-weight: bold;
+  color: #ffbb44;
 }
 
 .Government {
@@ -65,7 +97,7 @@
   -webkit-text-stroke: 0.05em black;
   text-shadow: 0 0 0.2em rgba(0, 0, 0, 0.3);
   animation: growshrink 1s infinite;
-  margin-top: 9vh;
+  margin-top: 8vh;
 }
 
 .VoteNow.hidden {

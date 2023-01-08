@@ -9,8 +9,8 @@ import liberalRevealUrl from '../assets/sound/liberal card.mp3'
 import fascistRevealUrl from '../assets/sound/fascist card.mp3'
 
 const drumroll = sound(drumrollUrl, 0.85)
-const liberalReveal = sound(liberalRevealUrl, 0.9)
-const fascistReveal = sound(fascistRevealUrl, 0.9)
+const liberalReveal = sound(liberalRevealUrl, 0.85)
+const fascistReveal = sound(fascistRevealUrl, 0.45)
 
 interface PolicyTrackerProps {
   party: Party

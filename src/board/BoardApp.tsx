@@ -1,4 +1,4 @@
-import { Component, createEffect, Match, Show, Switch, untrack } from 'solid-js'
+import { Component, createEffect, createSignal, Match, Show, Switch, untrack } from 'solid-js'
 import { LiveHeader } from '../components/LiveHeader'
 import { GameState } from '../dm/state'
 import { validateGameId } from '../validate'
@@ -6,6 +6,7 @@ import { createWs } from '../ws'
 import { JoinGame } from './JoinGame'
 import { PlayerRail } from './PlayerRail'
 import { BoardContent } from './BoardContent'
+import { Button } from '../player/Button'
 import s from './BoardApp.module.css'
 
 interface Props {
@@ -34,6 +35,8 @@ export const BoardApp: Component<Props> = props => {
     }
   })
 
+  const [promptInteraction, setPromptInteraction] = createSignal(new AudioContext().state !== 'running')
+
   return (
     <div class={s.BoardApp}>
       <LiveHeader connected={ws.connected()} />
@@ -45,6 +48,11 @@ export const BoardApp: Component<Props> = props => {
           {error => (
             <JoinGame gameId={props.gameId} join={props.onJoin} createGame={ws.createGame} error={error} />
           )}
+        </Match>
+        <Match when={ws.state() && promptInteraction()}>
+          <div class={s.ResumeScreen}>
+            <Button white label="Resume game" onClick={() => setPromptInteraction(false)} />
+          </div>
         </Match>
         <Match when={ws.state()}>
           <div class={s.Board}>

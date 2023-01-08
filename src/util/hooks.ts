@@ -15,26 +15,6 @@ export function useDelay(value: Accessor<boolean>, delay: number): Accessor<bool
   return output
 }
 
-// export function useDelay<T>(
-//   value: Accessor<T>,
-//   delay: number | ((value: T) => number | undefined)
-// ): Accessor<T> {
-//   const [output, setOutput] = createSignal(value())
-
-//   createEffect(() => {
-//     const value_ = value()
-//     const delay_ = typeof delay === 'number' ? delay : delay(value_)
-//     if (delay_ && delay_ > 0) {
-//       const timeout = setTimeout(() => setOutput(() => value_), delay_)
-//       onCleanup(() => clearTimeout(timeout))
-//     } else {
-//       setOutput(() => value_)
-//     }
-//   })
-
-//   return output
-// }
-
 export function useSound(audio: HTMLAudioElement, play: Accessor<boolean>) {
   const play_ = createMemo(play)
   createEffect(() => {
