@@ -13,6 +13,8 @@ import { LegislativeSession } from './modals/LegislativeSession'
 import { useDynamicSound } from '../util/hooks'
 import { sound } from '../util/sound'
 import { ExecutiveAction } from './modals/ExecutiveAction'
+import { CommunistSession } from './modals/CommunistSession'
+import { Confession } from './modals/Confession'
 import s from './BoardContent.module.css'
 import bkmusicUrl from '../assets/sound/moonlight.mp3'
 import tensionUrl from '../assets/sound/tension.mp3'
@@ -21,8 +23,6 @@ import policyPeekUrl from '../assets/sound/policy peek.mp3'
 import specialElectionUrl from '../assets/sound/special election.mp3'
 import executionUrl from '../assets/sound/execute player.mp3'
 import gunshotUrl from '../assets/sound/player death.mp3'
-import { Scene } from './modals/Scene'
-import { CommunistSession } from './modals/CommunistSession'
 
 const bkmusic = sound(bkmusicUrl, 0.8, true)
 const tension = sound(tensionUrl, 0.4, true)
@@ -46,9 +46,9 @@ export const BoardContent: Component<Props> = props => {
   )
   const parties = () => {
     if (communists()) {
-      return ['Liberal', 'Fascist', 'Communist']
+      return ['Liberal', 'Fascist', 'Communist'] as Party[]
     } else {
-      return ['Liberal', 'Fascist']
+      return ['Liberal', 'Fascist'] as Party[]
     }
   }
 
@@ -101,6 +101,7 @@ export const BoardContent: Component<Props> = props => {
       'Execution',
       'CommunistSession',
       'FiveYearPlan',
+      'Confession',
     ])
 
   useDynamicSound(() => {
@@ -192,7 +193,7 @@ export const BoardContent: Component<Props> = props => {
 
           <Match when={isPrompt(props.state, 'CommunistSession')}>
             <CommunistSession
-              state={props.state}
+              {...getCommunistSession(props.state)!}
               onEntered={() => props.action({ type: 'EndCommunistStart' })}
               onExited={() => props.action({ type: 'EndCommunistEnd' })}
             />
@@ -209,10 +210,9 @@ export const BoardContent: Component<Props> = props => {
           </Match>
 
           <Match when={isPrompt(props.state, 'Confession')}>
-            <CommunistSession
-              state={props.state}
-              onEntered={() => props.action({ type: 'EndCommunistStart' })}
-              onExited={() => props.action({ type: 'EndCommunistEnd' })}
+            <Confession
+              {...getConfession(props.state)!}
+              onDone={() => props.action({ type: 'EndExecutiveAction' })}
             />
           </Match>
         </Switch>
@@ -266,6 +266,22 @@ function getChosenPlayer(state: GameState) {
     player = state.state.prompt.chosen_player
   }
   return player != null ? state.players[player].name : undefined
+}
+
+function getCommunistSession(state: GameState) {
+  if (state.state.type !== 'board') return undefined
+  if (state.state.prompt?.type !== 'CommunistSession') return undefined
+  return state.state.prompt
+}
+
+function getConfession(state: GameState) {
+  if (state.state.type !== 'board') return undefined
+  if (state.state.prompt?.type !== 'Confession') return undefined
+  const player = state.state.prompt.chosen_player
+  return {
+    player: player != null ? state.players[player].name : undefined,
+    party: state.state.prompt.party ?? undefined,
+  }
 }
 
 function trackLength(party: Party, numPlayers: number): number {

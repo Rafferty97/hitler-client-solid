@@ -1,4 +1,4 @@
-import { Component, createEffect, onCleanup } from 'solid-js'
+import { Component, createEffect, onCleanup, Show } from 'solid-js'
 import { Scene } from './Scene'
 import { PlayerName } from './PlayerName'
 import { useDelay, useSound } from '../../util/hooks'
@@ -37,7 +37,9 @@ export const ExecutiveAction: Component<Props> = props => {
     <Scene>
       <h1 class={s.Title}>{props.title}</h1>
       <p class={s.Subtitle}>{props.subtitle}</p>
-      <PlayerName click name={props.player} />
+      <Show when={props.noPlayer !== true}>
+        <PlayerName click name={props.player} />
+      </Show>
     </Scene>
   )
 }
