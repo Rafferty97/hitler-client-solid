@@ -1,6 +1,7 @@
 import { Motion } from '@motionone/solid'
 import { Component, Index, Show } from 'solid-js'
 import { BoardState, GameState } from '../dm/state'
+import { filterSignal, usePersist } from '../util/hooks'
 import s from './PlayerRail.module.css'
 
 interface Props {
@@ -10,9 +11,26 @@ interface Props {
 export const PlayerRail: Component<Props> = props => {
   const state = () => (props.state.state.type === 'board' ? props.state.state : undefined)
 
+  const votes = () => getVotes(props.state)
+  const cachedVotes = filterSignal(votes, v => v != null)
+  const showVotes = usePersist(() => !!votes(), 4000)
+
   return (
     <div class={s.PlayerRail}>
-      <Index each={props.state.players}>{player => <div class={s.Player}>{player().name}</div>}</Index>
+      <Index each={props.state.players}>
+        {(player, index) => {
+          const vote = () => cachedVotes()?.[index] ?? null
+          return (
+            <div class={`${s.Player} ${player().alive ? '' : s.dead}`}>
+              {player().name}
+              <Show when={player().not_hitler}>
+                <div class={s.NotHitler}>Not hitler!</div>
+              </Show>
+              <div class={voteClass(vote(), showVotes())}>{vote() ? 'JA!' : 'NEIN!'}</div>
+            </div>
+          )
+        }}
+      </Index>
       <div class={s.Spacer} />
       <Show when={state()}>
         <h2>Cards in deck</h2>
@@ -48,4 +66,15 @@ function electionTracker(state: BoardState) {
   }
 
   return tracker
+}
+
+function getVotes(state: GameState) {
+  if (state.state.type !== 'board') return undefined
+  if (state.state.prompt?.type !== 'Election') return undefined
+  if (state.state.prompt.outcome == null) return undefined
+  return state.state.prompt.votes
+}
+
+function voteClass(vote: boolean | null, showVotes: boolean) {
+  return [s.Vote, showVotes && vote != null ? '' : s.hidden, vote ? s.ja : s.nein].join(' ')
 }

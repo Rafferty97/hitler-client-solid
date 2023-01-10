@@ -32,7 +32,7 @@ const ConsolePage: Component = () => {
     if (gameId_) setGameId(gameId_)
   })
 
-  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'EDDY', 'FRED', 'GEORGE', 'IJ', 'JACK', 'KAREN']
+  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'EDDY'] //, 'FRED', 'GEORGE', 'IJ', 'JACK', 'KAREN']
 
   const noop = () => {}
 
