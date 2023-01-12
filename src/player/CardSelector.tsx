@@ -95,12 +95,12 @@ export const Investigate: Component<InvestigateProps> = props => {
   return (
     <>
       <Show when={revealed()}>
-        <p class={`${ps.Message} ${ps.large}`}>
+        <p class={`${ps.Message} ${ps.large} ${ps.fixedHeight}`}>
           <strong>{props.name}</strong> is&nbsp;a <strong>{props.party}</strong>
         </p>
       </Show>
       <Show when={!revealed()}>
-        <p class={ps.Message}>
+        <p class={`${ps.Message} ${ps.fixedHeight}`}>
           Click to investigate
           <br />
           <strong>{props.name}</strong>

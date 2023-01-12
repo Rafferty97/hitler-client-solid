@@ -74,10 +74,14 @@ export const BoardContent: Component<Props> = props => {
 
   const cardReveal = () => {
     if (props.state.state.type !== 'board') return undefined
-    if (props.state.state.prompt?.type !== 'CardReveal') return undefined
-    const party = props.state.state.prompt.result
+    const prompt = props.state.state.prompt
+    if (prompt?.type !== 'CardReveal') return undefined
+    const party = prompt.result
     if (party == null) return undefined
-    return xy(party, numPolicies(party))
+    return {
+      ...xy(party, numPolicies(party)),
+      chaos: prompt.chaos,
+    }
   }
 
   const [rect, setRect] = createSignal({ width: 1000, height: 500 })

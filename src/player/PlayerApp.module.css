@@ -16,6 +16,10 @@
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
+.Message.fixedHeight {
+  height: 40px;
+}
+
 .Message.large {
   font-size: 18px;
 }

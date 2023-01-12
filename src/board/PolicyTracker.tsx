@@ -55,7 +55,12 @@ export const PolicyCard: Component<PolicyCardProps> = props => {
   )
 }
 
-export const CardReveal: Component<PolicyCardProps & { onDone: () => void }> = props => {
+type CardRevealProps = PolicyCardProps & {
+  chaos: boolean
+  onDone: () => void
+}
+
+export const CardReveal: Component<CardRevealProps> = props => {
   const [step, setStep] = createSignal(0)
 
   createEffect(() => {
@@ -69,6 +74,8 @@ export const CardReveal: Component<PolicyCardProps & { onDone: () => void }> = p
     const int = setInterval(props.onDone, 2000)
     onCleanup(() => clearInterval(int))
   })
+
+  const chaos = () => props.chaos && step() < 2
 
   useSound(drumroll, () => step() === 1)
   useSound(liberalReveal, () => step() === 2 && props.party === 'Liberal')
@@ -89,15 +96,20 @@ export const CardReveal: Component<PolicyCardProps & { onDone: () => void }> = p
   const duration = () => [0, 0.8, 0.35, 0.6][step()]
 
   return (
-    <Motion.div
-      class={s.PolicyCard}
-      initial={false}
-      animate={{ transform: transform() }}
-      transition={{ duration: duration(), easing: 'ease-in-out' }}
-    >
-      <div class={`${s.Front} ${s[props.party]}`} />
-      <div class={s.Back} />
-    </Motion.div>
+    <>
+      <Motion.div
+        class={s.PolicyCard}
+        initial={false}
+        animate={{ transform: transform() }}
+        transition={{ duration: duration(), easing: 'ease-in-out' }}
+      >
+        <div class={`${s.Front} ${s[props.party]}`} />
+        <div class={s.Back} />
+      </Motion.div>
+      <Motion.div animate={{ opacity: chaos() ? 1 : 0 }} transition={{ duration: 0.2 }} class={s.Chaos}>
+        CHAOS!
+      </Motion.div>
+    </>
   )
 }
 

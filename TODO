@@ -1,17 +1,19 @@
-- Consistent spacing in ".Message"
-- Night round UI
-- Secret role persistent UI
-- Game over screens
-- Player states in player rail
-  - President and chancellor
-- Choas
-- Ja/nein cards
-- Board join/create game UI
-- How to fit 10+ players on the screen
-- Console autoplay
-- Hitler zone warning
-- Resume game button
-- XL
+Priority:
+  - Night round UI
+  - Secret role persistent UI
+  - Game over screens
+  - Player states in player rail
+    - President and chancellor
+  - Board join/create game UI
+
+XL:
   - Anarchist, interaction with special election, etc.
   - Communist session UI and dialogue
   - Confession UI
+
+Nice to have:
+  - Ja/nein cards
+  - How to fit 10+ players on the screen
+  - Console autoplay
+  - Hitler zone warning
+  - Resume game button

@@ -120,3 +120,26 @@
   transform: rotateY(-180deg);
   background-image: url(../assets/back_article.png);
 }
+
+.Chaos {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  font-size: 7vw;
+  font-family: 'Germania One', sans-serif;
+  text-transform: uppercase;
+  -webkit-text-stroke: 0.02em black;
+  text-shadow: 0.05em 0.05em black;
+  letter-spacing: 0.05em;
+  animation: growshrink 2s infinite;
+  text-align: center;
+  line-height: 1em;
+  margin-top: -3.5vw;
+}
+
+@keyframes growshrink {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

@@ -32,7 +32,11 @@ const ConsolePage: Component = () => {
     if (gameId_) setGameId(gameId_)
   })
 
-  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'EDDY'] //, 'FRED', 'GEORGE', 'IJ', 'JACK', 'KAREN']
+  const numPlayers = parseInt(params['num'] ?? '5')
+  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'EDDY', 'FRED', 'GEORGE', 'IJ', 'JACK', 'KAREN'].slice(
+    0,
+    numPlayers
+  )
 
   const noop = () => {}
 
