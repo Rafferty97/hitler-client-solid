@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { executiveAction } from './executive-action'
+import { gameOutcome } from './game-outcome'
 import { nonzeroInt } from './primative'
 import { party } from './role'
 
@@ -89,14 +90,7 @@ const confessionPrompt = z.object({
 
 const gameOverPrompt = z.object({
   type: z.literal('GameOver'),
-  outcome: z.enum([
-    'LiberalPolicyTrack',
-    'FascistPolicyTrack',
-    'CommunistPolicyTrack',
-    'HitlerChancellor',
-    'HitlerExecuted',
-    'CapitalistExecuted',
-  ]),
+  outcome: gameOutcome,
 })
 
 export const boardPrompt = z.discriminatedUnion('type', [

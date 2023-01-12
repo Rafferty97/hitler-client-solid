@@ -1,0 +1,11 @@
+.Parties {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.Parties img {
+  display: block;
+  width: 15vw;
+}

@@ -23,6 +23,7 @@ import policyPeekUrl from '../assets/sound/policy peek.mp3'
 import specialElectionUrl from '../assets/sound/special election.mp3'
 import executionUrl from '../assets/sound/execute player.mp3'
 import gunshotUrl from '../assets/sound/player death.mp3'
+import { GameOver } from './modals/GameOver'
 
 const bkmusic = sound(bkmusicUrl, 0.8, true)
 const tension = sound(tensionUrl, 0.4, true)
@@ -106,6 +107,7 @@ export const BoardContent: Component<Props> = props => {
       'CommunistSession',
       'FiveYearPlan',
       'Confession',
+      'GameOver',
     ])
 
   useDynamicSound(() => {
@@ -219,6 +221,10 @@ export const BoardContent: Component<Props> = props => {
               onDone={() => props.action({ type: 'EndExecutiveAction' })}
             />
           </Match>
+
+          <Match when={isPrompt(props.state, 'GameOver')}>
+            <GameOver {...getGameOver(props.state)!} />
+          </Match>
         </Switch>
       </Presence>
 
@@ -285,6 +291,15 @@ function getConfession(state: GameState) {
   return {
     player: player != null ? state.players[player].name : undefined,
     party: state.state.prompt.party ?? undefined,
+  }
+}
+
+function getGameOver(state: GameState) {
+  if (state.state.type !== 'board') return undefined
+  if (state.state.prompt?.type !== 'GameOver') return undefined
+  return {
+    outcome: state.state.prompt.outcome,
+    communists: state.state.communist_cards != null,
   }
 }
 
