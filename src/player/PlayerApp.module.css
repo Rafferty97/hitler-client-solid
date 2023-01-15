@@ -102,6 +102,7 @@
   border: 1px solid #bbb;
   border-bottom: none;
   cursor: pointer;
+  pointer-events: all;
 }
 
 .RoleTab .Role {
@@ -111,4 +112,5 @@
   text-transform: uppercase;
   border-top: 1px solid white;
   cursor: pointer;
+  pointer-events: all;
 }

@@ -49,7 +49,7 @@ export const CommunistSession: Component<Props> = props => {
 
 function getSubtitle(step: string, action: ExecutiveAction) {
   if (step === 'Entering-0') {
-    return 'All player close your eyes'
+    return 'All players close your eyes'
   }
   if (step === 'Entering-1') {
     return 'The communists may now open their eyes'

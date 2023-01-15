@@ -16,6 +16,7 @@ export const RoleTab: Component<{ role: Role }> = props => {
   return (
     <div class={s.RoleTab}>
       <Motion.div
+        initial={{ transform: 'translate(0, 40px)' }}
         animate={{
           transform: open() ? 'translate(0, 0)' : 'translate(0, 40px)',
         }}
