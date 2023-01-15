@@ -24,15 +24,19 @@ export const JoinGame: Component<Props> = props => {
   }
 
   const [communists, setCommunists] = createSignal(false)
+  const [monarchist, setMonarchist] = createSignal(false)
+  const [anarchist, setAnarchist] = createSignal(false)
+  const [capitalist, setCapitalist] = createSignal(false)
+  const [centrists, setCentrists] = createSignal(false)
 
   const createGame = (ev: Event) => {
     ev.preventDefault()
     props.createGame({
       communists: communists(),
-      monarchist: false,
-      anarchist: false,
-      capitalist: false,
-      centrists: false,
+      monarchist: monarchist(),
+      anarchist: communists() && anarchist(),
+      capitalist: capitalist(),
+      centrists: centrists(),
     })
   }
 
@@ -59,6 +63,10 @@ export const JoinGame: Component<Props> = props => {
         <h2>Create game</h2>
         <form onSubmit={createGame}>
           <Checkbox label="Communists" value={communists()} onChange={setCommunists} />
+          <Checkbox label="Monarchist" value={monarchist()} onChange={setMonarchist} />
+          <Checkbox label="Anarchist" value={anarchist()} onChange={setAnarchist} disabled={!communists()} />
+          <Checkbox label="Capitalist" value={capitalist()} onChange={setCapitalist} />
+          <Checkbox label="Centrists" value={centrists()} onChange={setCentrists} />
           <Button submit label="Create game" />
         </form>
       </div>
@@ -66,13 +74,19 @@ export const JoinGame: Component<Props> = props => {
   )
 }
 
-const Checkbox: Component<{ label: string; value: boolean; onChange: (value: boolean) => void }> = props => {
+const Checkbox: Component<{
+  label: string
+  value: boolean
+  onChange: (value: boolean) => void
+  disabled?: boolean
+}> = props => {
   return (
-    <label>
+    <label class={s.Checkbox}>
       <input
         type="checkbox"
         onChange={ev => props.onChange((ev.target as HTMLInputElement).checked)}
         checked={props.value}
+        disabled={props.disabled}
       />
       {props.label}
     </label>

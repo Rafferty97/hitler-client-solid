@@ -38,3 +38,41 @@
   font-weight: bold;
   color: #ffaa33;
 }
+
+.Explanation {
+  margin: 30px auto;
+  text-align: center;
+  font-size: 15px;
+  width: 15em;
+}
+
+.SecretRole {
+  font-size: 32px;
+  color: #ffbb44;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  font-family: 'Germania One', sans-serif;
+}
+
+.PlayerTable {
+  margin: 30px 0 10px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.PlayerTable td {
+  font-size: 17px;
+  line-height: 1.5;
+  padding: 6px 0;
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
+  font-weight: bold;
+}
+
+.PlayerTable td + td {
+  color: #ffbb44;
+  font-weight: normal;
+}

@@ -5,6 +5,7 @@ import { Party, Role } from '../dm/role'
 import { PublicPlayer } from '../dm/state'
 import { Button } from './Button'
 import { CardSelector, Investigate, PolicyPeak } from './CardSelector'
+import { NightRound } from './NightRound'
 import s from './PlayerApp.module.css'
 
 interface Props {
@@ -20,16 +21,11 @@ export const Prompt: Component<Props> = props => {
   return (
     <Switch fallback={<pre>{JSON.stringify(props, undefined, 2)}</pre>}>
       <Match when={props.prompt.type === 'Night'}>
-        {/* FIXME: Needs improvement */}
-        <h3>Night round</h3>
-        {props.players
-          .filter(p => p.Party || p.Role)
-          .map(player => (
-            <p>
-              {player.name} {player.Role ?? player.Party}
-            </p>
-          ))}
-        <Button label="Okay" onClick={() => props.action({ type: 'EndNightRound' })} />
+        <NightRound
+          role={props.role}
+          others={props.players}
+          next={() => props.action({ type: 'EndNightRound' })}
+        />
       </Match>
 
       <Match when={props.prompt.type === 'ChoosePlayer' ? props.prompt : undefined} keyed>

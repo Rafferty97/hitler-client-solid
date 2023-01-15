@@ -17,3 +17,7 @@
   height: 50vh;
   border-left: 2px dashed #888;
 }
+
+.Checkbox {
+  display: block;
+}
