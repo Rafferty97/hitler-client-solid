@@ -55,6 +55,7 @@ const ConsolePage: Component = () => {
               border: '2px solid white',
               background: '#222',
               overflow: 'hidden',
+              position: 'relative',
             }}
           >
             <PlayerApp name={player} gameId={gameId()} onJoin={noop} />

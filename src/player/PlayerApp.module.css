@@ -1,5 +1,6 @@
 .PlayerApp {
   color: white;
+  padding-bottom: 60px;
 }
 
 .Container {
@@ -9,7 +10,7 @@
 }
 
 .Message {
-  margin: 30px 0;
+  margin: 25px 0;
   text-align: center;
   font-size: 15px;
   text-transform: uppercase;
@@ -31,7 +32,7 @@
 }
 
 .Message.padded {
-  margin: 50px 0;
+  margin: 40px 0;
 }
 
 .Message strong {
@@ -75,4 +76,39 @@
 .PlayerTable td + td {
   color: #ffbb44;
   font-weight: normal;
+}
+
+.RoleTab {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  box-sizing: border-box;
+  font-size: 16px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.RoleTab .Tab {
+  padding: 6px 0 8px;
+  line-height: 1.4;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background-color: black;
+  margin: 0 auto;
+  width: 180px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  border: 1px solid #bbb;
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.RoleTab .Role {
+  padding: 9px 0 11px;
+  line-height: 20px;
+  background-color: #b44;
+  text-transform: uppercase;
+  border-top: 1px solid white;
+  cursor: pointer;
 }

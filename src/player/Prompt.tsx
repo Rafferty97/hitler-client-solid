@@ -118,14 +118,16 @@ const ChoosePlayer: Component<{
 }> = props => (
   <>
     <p class={s.Message}>{choosePlayerMessage(props.prompt)}</p>
-    {props.prompt.options.map(name => (
-      <Button
-        yellow
-        small={props.prompt.options.length > 5}
-        label={name}
-        onClick={() => props.action({ type: 'ChoosePlayer', name })}
-      />
-    ))}
+    <div class={s.List}>
+      {props.prompt.options.map(name => (
+        <Button
+          yellow
+          small={props.prompt.options.length > 5}
+          label={name}
+          onClick={() => props.action({ type: 'ChoosePlayer', name })}
+        />
+      ))}
+    </div>
   </>
 )
 

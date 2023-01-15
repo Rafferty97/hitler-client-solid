@@ -1,4 +1,4 @@
-import { Component, createEffect, Match, Switch, untrack } from 'solid-js'
+import { Component, createEffect, Match, Show, Switch, untrack } from 'solid-js'
 import { LiveHeader } from '../components/LiveHeader'
 import { GameState } from '../dm/state'
 import { validateGameIdAndName } from '../validate'
@@ -7,6 +7,8 @@ import { JoinGame } from './JoinGame'
 import { Lobby } from './Lobby'
 import { Prompt } from './Prompt'
 import s from './PlayerApp.module.css'
+import { Motion } from '@motionone/solid'
+import { RoleTab } from './RoleTab'
 
 interface Props {
   gameId?: string
@@ -63,6 +65,9 @@ export const PlayerApp: Component<Props> = props => {
           </Match>
         </Switch>
       </div>
+      <Show when={playerRole(ws.state())}>
+        <RoleTab role={playerRole(ws.state())!} />
+      </Show>
     </div>
   )
 }
@@ -101,5 +106,11 @@ function isError(state: GameState | undefined) {
       case 'inprogress':
         return `Game has already started`
     }
+  }
+}
+
+function playerRole(state: GameState | undefined) {
+  if (state?.state.type === 'player' && state.state.prompt?.type !== 'Night') {
+    return state.state.role
   }
 }
