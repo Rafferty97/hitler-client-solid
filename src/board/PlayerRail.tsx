@@ -15,6 +15,8 @@ export const PlayerRail: Component<Props> = props => {
   const cachedVotes = filterSignal(votes, v => v != null)
   const showVotes = usePersist(() => !!votes(), 4000)
 
+  const gov = () => getGovernment(props.state)
+
   return (
     <div class={s.PlayerRail}>
       <Index each={props.state.players}>
@@ -23,6 +25,8 @@ export const PlayerRail: Component<Props> = props => {
           return (
             <div class={`${s.Player} ${player().alive ? '' : s.dead}`}>
               {player().name}
+              {index === gov()?.president ? ' (P)' : ''}
+              {index === gov()?.chancellor ? ' (C)' : ''}
               <Show when={player().not_hitler}>
                 <div class={s.NotHitler}>Not hitler!</div>
               </Show>
@@ -77,4 +81,9 @@ function getVotes(state: GameState) {
 
 function voteClass(vote: boolean | null, showVotes: boolean) {
   return [s.Vote, showVotes && vote != null ? '' : s.hidden, vote ? s.ja : s.nein].join(' ')
+}
+
+function getGovernment(state: GameState) {
+  if (state.state.type !== 'board') return null
+  return state.state.last_government
 }

@@ -1,7 +1,5 @@
 Priority:
   - Game over screens
-  - Player states in player rail
-    - President and chancellor
   - Board join/create game UI
 
 XL:
@@ -16,3 +14,4 @@ Nice to have:
   - Console autoplay
   - Hitler zone warning
   - Resume game button
+  - Better president/chancellor icons
