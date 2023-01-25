@@ -9,7 +9,7 @@ import './index.css'
 
 render(
   () => (
-    <Router>
+    <Router base={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" component={HomePage} />
         <Route path="/board" component={BoardPage} />
