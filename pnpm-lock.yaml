@@ -6,7 +6,7 @@ specifiers:
   motion: ^10.15.3
   qrcode-generator: ^1.4.4
   solid-js: ^1.6.6
-  typescript: ^4.9.4
+  typescript: ^5.4.2
   vite: ^4.0.3
   vite-plugin-solid: ^2.5.0
   websocket-ts: ^1.1.1
@@ -22,7 +22,7 @@ dependencies:
   zod: 3.20.2
 
 devDependencies:
-  typescript: 4.9.4
+  typescript: 5.4.2
   vite: 4.0.3
   vite-plugin-solid: 2.5.0_solid-js@1.6.6+vite@4.0.3
 
@@ -994,9 +994,9 @@ packages:
     resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
     dev: false
 
-  /typescript/4.9.4:
-    resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
-    engines: {node: '>=4.2.0'}
+  /typescript/5.4.2:
+    resolution: {integrity: sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==}
+    engines: {node: '>=14.17'}
     hasBin: true
     dev: true
 
