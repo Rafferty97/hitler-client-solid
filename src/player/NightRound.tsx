@@ -59,7 +59,7 @@ function getRoleText(role: Role, others: OtherPlayer[]) {
       return 'Liberals do not know the identity of any other player'
     case 'Fascist':
       const monarchist = others.find(p => p.Role === 'Monarchist') ? ' and the Monarchist' : ''
-      return `Fascists know the identity of their fellow fascists, including Hitler${monarchist}`
+      return `Fascists know the identities of their fellow fascists, including Hitler${monarchist}`
     case 'Hitler':
       if (others.find(p => p.Role === 'Fascist')) {
         return 'Hitler knows the identity of the ordinary fascist'
