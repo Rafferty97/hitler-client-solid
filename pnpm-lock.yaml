@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@motionone/solid': ^10.15.4
-  '@solidjs/router': ^0.10.0
+  '@solidjs/router': ^0.13.0
   motion: ^10.15.3
   qrcode-generator: ^1.4.4
   solid-js: ^1.8.0
@@ -14,7 +14,7 @@ specifiers:
 
 dependencies:
   '@motionone/solid': 10.15.4_solid-js@1.8.15
-  '@solidjs/router': 0.10.10_solid-js@1.8.15
+  '@solidjs/router': 0.13.0_solid-js@1.8.15
   motion: 10.15.3
   qrcode-generator: 1.4.4
   solid-js: 1.8.15
@@ -669,8 +669,8 @@ packages:
       solid-js: 1.8.15
     dev: false
 
-  /@solidjs/router/0.10.10_solid-js@1.8.15:
-    resolution: {integrity: sha512-nGl7gMgsojuaupI5MAK2cFtkndmWWSAPhill/8La3IjujY3vMBamcQFymBsA2ejzxEYJjkOlEQHYgp2jNFkwuQ==}
+  /@solidjs/router/0.13.0_solid-js@1.8.15:
+    resolution: {integrity: sha512-YHLbFv9J53+iG4yVrh0vVdYiyXPTk892UyZ1jiMPsUXn2dYkX4552N+8SjvlKWWsmNmYxaoefM6jZn1YtVIUUg==}
     peerDependencies:
       solid-js: ^1.8.6
     dependencies:

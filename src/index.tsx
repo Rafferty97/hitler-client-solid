@@ -8,7 +8,7 @@ import './index.css'
 
 render(
   () => (
-    <Router base={import.meta.env.BASE_URL}>
+    <Router base={import.meta.env.BASE_URL} explicitLinks>
       <Route path="/board" component={BoardPage} />
       <Route path="/player" component={PlayerPage} />
       <Route path="/console" component={ConsolePage} />

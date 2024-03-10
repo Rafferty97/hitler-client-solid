@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@motionone/solid": "^10.15.4",
-    "@solidjs/router": "^0.10.0",
+    "@solidjs/router": "^0.13.0",
     "motion": "^10.15.3",
     "qrcode-generator": "^1.4.4",
     "solid-js": "^1.8.0",
