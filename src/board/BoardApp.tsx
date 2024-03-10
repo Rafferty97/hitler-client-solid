@@ -44,7 +44,7 @@ export const BoardApp: Component<Props> = props => {
 
   return (
     <div class={s.BoardApp}>
-      <LiveHeader connected={ws.connected()} />
+      <LiveHeader name={ws.state()?.game_id} connected={ws.connected()} />
       <Switch>
         <Match when={ws.creating()}>
           {/* FIXME */}
