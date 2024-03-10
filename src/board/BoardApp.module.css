@@ -26,3 +26,10 @@
 .ResumeScreen button {
   width: 200px;
 }
+
+.Loading {
+  font-size: 18px;
+  text-align: center;
+  margin: 60px 0;
+  text-transform: uppercase;
+}

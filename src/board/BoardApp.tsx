@@ -47,8 +47,7 @@ export const BoardApp: Component<Props> = props => {
       <LiveHeader name={ws.state()?.game_id} connected={ws.connected()} />
       <Switch>
         <Match when={ws.creating()}>
-          {/* FIXME */}
-          <div>Creating game...</div>
+          <div class={s.Loading}>Creating game...</div>
         </Match>
         <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
           <JoinGame join={ws.joinAsBoard} createGame={ws.createGame} />
