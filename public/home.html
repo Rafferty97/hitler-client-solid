@@ -26,14 +26,19 @@
 
     header {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      margin: 4rem 0;
+      margin: 3rem 0;
     }
 
     header img {
       width: 8rem;
-      margin-right: 2rem;
+      margin: 0.5rem 1rem;
+    }
+
+    header h1 {
+      margin: 0.5rem 1rem;
     }
 
     h1,
@@ -106,6 +111,10 @@
     }
 
     @media (max-width: 800px) {
+      header {
+        margin: 2rem 0;
+      }
+
       h1 {
         font-size: 2rem;
       }
