@@ -1,59 +1,177 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Secret Hitler - Online Boardgame</title>
-    <link href="https://fonts.googleapis.com/css2?family=Germania+One&amp;display=swap" rel="stylesheet">
-    <style>
-      body {
-        background-color: #222;
-        background-color: #222;
-        background-image: linear-gradient(to bottom, rgba(30, 30, 30, 0.99), rgba(20, 20, 20, 0.97));
-        background-size: cover;
-        background-position: 50% 50%;
-        background-repeat: no-repeat;
-        min-height: 100vh;
-        color: white;
-      }
 
-      #container {
-        width: 90%;
-        margin: 1rem auto;
-      }
+<head>
+  <title>Secret Hitler - Online Boardgame</title>
+  <link href="https://fonts.googleapis.com/css2?family=Germania+One&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #222;
+      background-color: #222;
+      background-image: linear-gradient(to bottom, rgba(30, 30, 30, 0.99), rgba(20, 20, 20, 0.97));
+      background-size: cover;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      color: white;
+      font-family: 'Helvetica', sans-serif;
+    }
 
-      img {
-        display: block;
-        max-width: 100%;
-        margin: 2rem auto;
-      }
+    #container {
+      width: 90%;
+      max-width: 800px;
+      margin: 1rem auto;
+    }
 
-      #logo {
-        width: 240px;
-      }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 4rem 0;
+    }
 
+    header img {
+      width: 8rem;
+      margin-right: 2rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: orange;
+      font-family: 'Germania One', sans-serif;
+      letter-spacing: 0.1em;
+      text-shadow: 2px 2px 0 black;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 2em 0 1em;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem auto 4rem;
+    }
+
+    .buttons a {
+      display: block;
+      background: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.25rem;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: black;
+      transition: background-color 0.3s;
+      text-align: center;
+      margin: 1rem 0;
+      flex: 1 1 0;
+      font-weight: bold;
+    }
+
+    .buttons a:hover {
+      background: #ddd;
+    }
+
+    .licence {
+      margin: 4rem 0;
+      text-align: center;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+
+    p,
+    li {
+      line-height: 1.5rem;
+    }
+
+    li {
+      margin: 1em 0;
+    }
+
+    @media (max-width: 800px) {
       h1 {
-        text-align: center;
-        text-align: center;
-        font-size: 3rem;
-        margin: 0 0 1em 0;
+        font-size: 2rem;
       }
 
-      h1, h2, h3, h4, h5, h6 {
-        color: orange;
-        font-family: 'Germania One', sans-serif;
-        letter-spacing: 0.1em;
-        text-shadow: 2px 2px 0 black;
+      .buttons {
+        display: block;
+        max-width: 18rem;
+        ;
       }
-    </style>
-  </head>
-  <body>
-    <div id="container">
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <header>
       <img id="logo" src="/secret-hitler.png">
       <h1>SecretHitler.live</h1>
-      <div>
-        <a href="/board?create=true">Create Game</a>
-        <a href="/board">New Board Screen</a>
-        <a href="/player">New Player</a>
-      </div>
+    </header>
+    <div class="buttons">
+      <a href="/board?create=true">Create Game</a>
+      <a href="/board">New Board Screen</a>
+      <a href="/player">New Player</a>
     </div>
-  </body>
+    <div class="about">
+      <h2>What is this?</h2>
+      <p>This is an online version of the popular board game "Secret Hitler", in which the game board is shown on a
+        laptop/TV screen (or screens) and each player interacts with the game using their own device such as a smart
+        phone or tablet.</p>
+      <h2>Quick start</h2>
+      <ul>
+        <li>On a shared screen such as a TV or laptop, click "BOARD SCREEN", then "CREATE NEW GAME"</li>
+        <li>Each player, on their own device, clicks "PLAYER" then enters the room code and their name. Alternatively
+          they can scan the QR code on the board screen.</li>
+        <li>Once all players have joined, simply click "START GAME".</li>
+      </ul>
+      <h2>Game Rules</h2>
+      <p>The game has the exact same rules as the original board game which can be found at its <a
+          href="https://secrethitler.com" target="_blank">official website</a>.</p>
+      <p>Players are prompted to perform certain actions on their devices and all game logic is performed on the server,
+        so gameplay should be straightforward and easy.</p>
+      <h2>Important notes</h2>
+      <ul>
+        <li>After each card is revealed, whether Liberal or Fascist, the game will wait until all players have clicked
+          the "NEXT" button. This is to allow players to interrogate each other following a legislative session.</li>
+        <li>When the president and chancellor are selecting policy cards, the UI requires the player to select the card
+          they wish to discard. This is important to remember when playing as the chancellor, who only has two cards.
+          The UI gives the player the chance to confirm their selection before comitting.</li>
+        <li>Be sure to pay attention to the players list on the right. It reveals who voted "JA!" and "NEIN!" in
+          elections, as well as which players have been confirmed not to be Hitler after elections and executions.</li>
+      </ul>
+      <h2>Who made this?</h2>
+      <p>This digital adaptation of Secret Hitler was made by <a href="https://alexanderrafferty.com/"
+          target="_blank">Alexander Rafferty</a>, but the original creators of the game are Max, Mike, Tommy and
+        Mackenzie. There is a full attribution in the footer.</p>
+    </div>
+    <div class="licence">
+      <p>Secret Hitler is designed by Max Temkin, Mike Boxleiter, Tommy Maranges and illustrated by Mackenzie Schubert.
+      </p>
+      <p>This game is attributed as per the <a target="_blank"
+          href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons
+          Attribution-NonCommercial-ShareAlike
+          4.0 International license</a>.</p>
+      <p>The original game can be found at <a target="_blank" href="https://www.secrethitler.com/">secrethitler.com</a>.
+      </p>
+    </div>
+  </div>
+</body>
+
 </html>
