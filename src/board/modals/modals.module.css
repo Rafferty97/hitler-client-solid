@@ -28,6 +28,7 @@
 }
 
 .Title {
+  position: relative;
   font-size: 3.8vw;
   font-family: 'Germania One', sans-serif;
   text-transform: uppercase;
@@ -169,4 +170,37 @@
 .StepFade.faded {
   opacity: 0.75;
   transform: scale(0.85);
+}
+
+.PartySeal {
+  position: relative;
+  width: 25vh;
+  height: 25vh;
+  border-radius: 100%;
+  margin-bottom: 5vh;
+  background-color: black;
+}
+
+.PartySeal > * {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.PartySeal > :first-child {
+  transform: scale(2);
+  animation: oscillate 5s ease-in-out infinite;
+}
+
+@keyframes oscillate {
+  0%, 100% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1);
+  }
 }

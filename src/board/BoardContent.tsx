@@ -1,6 +1,6 @@
 import { Presence } from '@motionone/solid'
 import { Component, createEffect, createMemo, createSignal, JSX, Match, Show, Switch } from 'solid-js'
-import { BoardState, GameState } from '../dm/state'
+import { GameState } from '../dm/state'
 import { Lobby } from './modals/Lobby'
 import { BoardPrompt } from '../dm/board-prompt'
 import { CardReveal, PolicyCard, PolicyTracker } from './PolicyTracker'
