@@ -1,4 +1,4 @@
-import { Component, createEffect, Match, Show, Switch, untrack } from 'solid-js'
+import { Component, createEffect, Show, untrack } from 'solid-js'
 import { LiveHeader } from '../components/LiveHeader'
 import { GameState } from '../dm/state'
 import { validateGameIdAndName } from '../validate'
@@ -6,9 +6,8 @@ import { createWs } from '../ws'
 import { JoinGame } from './JoinGame'
 import { Lobby } from './Lobby'
 import { Prompt } from './Prompt'
-import s from './PlayerApp.module.css'
-import { Motion } from '@motionone/solid'
 import { RoleTab } from './RoleTab'
+import s from './PlayerApp.module.css'
 
 interface Props {
   gameId?: string
@@ -43,27 +42,21 @@ export const PlayerApp: Component<Props> = props => {
     <div class={s.PlayerApp}>
       <LiveHeader connected={ws.connected()} name={name()} />
       <div class={s.Container}>
-        <Switch>
-          <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
-            <JoinGame gameId={props.gameId} name={props.name} join={ws.joinAsPlayer} />
-          </Match>
-          <Match when={isError(ws.state())} keyed>
-            {error => (
-              <JoinGame gameId={props.gameId} name={props.name} join={ws.joinAsPlayer} error={error} />
-            )}
-          </Match>
-          <Match when={ws.state()?.state.type === 'connecting'}>
-            <p class={s.Message}>Joining game...</p>
-          </Match>
-          <Match when={isLobby(ws.state())} keyed>
-            {state => <Lobby {...state} start={ws.startGame} />}
-          </Match>
-          <Match when={isPrompt(ws.state())} keyed>
-            {state => (
-              <Prompt {...state} action={ws.playerAction} startGame={ws.startGame} endGame={ws.endGame} />
-            )}
-          </Match>
-        </Switch>
+        <Show when={ws.state() == null || ws.state()?.state.type === 'ended'}>
+          <JoinGame gameId={props.gameId} name={props.name} join={ws.joinAsPlayer} />
+        </Show>
+        <Show when={isError(ws.state())} keyed>
+          {error => <JoinGame gameId={props.gameId} name={props.name} join={ws.joinAsPlayer} error={error} />}
+        </Show>
+        <Show when={ws.state()?.state.type === 'connecting'}>
+          <p class={s.Message}>Joining game...</p>
+        </Show>
+        <Show when={isLobby(ws.state())}>{state => <Lobby {...state()} start={ws.startGame} />}</Show>
+        <Show when={isPrompt(ws.state())}>
+          {state => (
+            <Prompt {...state()} action={ws.playerAction} startGame={ws.startGame} endGame={ws.endGame} />
+          )}
+        </Show>
       </div>
       <Show when={playerRole(ws.state())}>
         <RoleTab role={playerRole(ws.state())!} />
