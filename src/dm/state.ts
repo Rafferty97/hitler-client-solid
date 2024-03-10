@@ -53,7 +53,7 @@ const endedState = z.object({ type: z.literal('ended') })
 
 const errorState = z.object({
   type: z.literal('error'),
-  error: z.enum(['notfound', 'toomanyplayers', 'inprogress']),
+  error: z.enum(['notfound', 'toomanyplayers', 'inprogress', 'unknown']),
 })
 
 const publicPlayer = z.object({

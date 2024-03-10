@@ -1,6 +1,5 @@
 import { A } from '@solidjs/router'
 import { Component } from 'solid-js'
-import s from './Home.module.css'
 
 const HomePage: Component = () => {
   return (

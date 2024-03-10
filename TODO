@@ -1,13 +1,14 @@
 Priority:
   - Game over screens
-  - Board join/create game UI
   - Fix execution bug
+  - Fix "resume game" bug
 
 XL:
   - Anarchist, interaction with special election, etc.
   - Communist session UI and dialogue
   - Radicalisation reveal UI
   - Confession UI
+  - Board join/create game UI
 
 Nice to have:
   - Ja/nein cards

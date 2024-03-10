@@ -1,23 +1,58 @@
-.JoinGame {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  min-height: calc(100vh - 100px);
+.JoinForm {
+  width: 85%;
+  max-width: 320px;
+  margin: 60px auto;
 }
 
-.JoinGame .Column {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.JoinForm .Row {
+  margin: 15px 0;
 }
 
-.JoinGame .Divider {
-  width: 0;
-  height: 50vh;
-  border-left: 2px dashed #888;
-}
-
-.Checkbox {
+.JoinForm label {
   display: block;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+
+.JoinForm input[type="text"] {
+  background-color: #444;
+  color: white;
+  border: 2px solid #ccc;
+  font-size: 18px;
+  padding: 8px 12px;
+  line-height: 24px;
+  border-radius: 6px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.JoinForm input[type="text"]:focus {
+  border: 2px solid #ffaa33;
+}
+
+.JoinForm input[type="submit"]:disabled {
+  opacity: 1;
+}
+
+.Or {
+  display: flex;
+  margin: 32px 0;
+  text-align: center;
+  align-items: center;
+}
+
+.Or span {
+  margin: 0 12px 3px;
+  font-weight: bold;
+}
+
+.Or::before, .Or::after {
+  display: block;
+  content: "";
+  height: 1px;
+  background: rgba(255, 255, 255, 0.5);
+  flex: 1 1 0;
 }

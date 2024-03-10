@@ -1,4 +1,3 @@
-import { A } from '@solidjs/router'
 import { Component, Show } from 'solid-js'
 import s from './LiveHeader.module.css'
 
@@ -17,9 +16,9 @@ export const LiveHeader: Component<Props> = props => {
       <Show when={props.name != null}>
         <span class={s.Name}>{props.name}</span>
       </Show>
-      <A class={s.Exit} href="/">
+      <a class={s.Exit} href="/">
         Home
-      </A>
+      </a>
     </div>
   )
 }

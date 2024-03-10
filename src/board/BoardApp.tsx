@@ -12,10 +12,15 @@ import s from './BoardApp.module.css'
 interface Props {
   gameId?: string
   onJoin: (gameId: string) => void
+  create?: boolean
 }
 
 export const BoardApp: Component<Props> = props => {
   const ws = createWs()
+
+  if (props.create) {
+    ws.createGame()
+  }
 
   createEffect(() => {
     const next = validateGameId(props.gameId)
@@ -41,6 +46,10 @@ export const BoardApp: Component<Props> = props => {
     <div class={s.BoardApp}>
       <LiveHeader connected={ws.connected()} />
       <Switch>
+        <Match when={ws.creating()}>
+          {/* FIXME */}
+          <div>Creating game...</div>
+        </Match>
         <Match when={ws.state() == null || ws.state()?.state.type === 'ended'}>
           <JoinGame join={ws.joinAsBoard} createGame={ws.createGame} />
         </Match>
