@@ -1,9 +1,11 @@
-import { Component, createEffect, createSignal, Signal } from 'solid-js'
+import { Component, createSignal } from 'solid-js'
+import { makePersisted } from '@solid-primitives/storage'
 import { Error } from '../components/Error'
 import { Button } from '../player/Button'
 import { validateGameId } from '../validate'
 import { GameOptions } from '../ws'
 import s from './JoinGame.module.css'
+import { createStore } from 'solid-js/store'
 
 interface Props {
   gameId?: string
@@ -23,10 +25,24 @@ export const JoinGame: Component<Props> = props => {
     if (gameId_) props.join(gameId_)
   }
 
-  const createGame = (ev: Event) => {
+  const createGame = (ev: Event, opts?: GameOptions) => {
     ev.preventDefault()
-    props.createGame()
+    props.createGame(opts)
   }
+
+  const [settings, setSettings] = makePersisted(
+    createStore({
+      communists: false,
+      monarchist: false,
+      anarchist: false,
+      capitalist: false,
+      centrists: false,
+    }),
+    {
+      storage: localStorage,
+      name: 'xl_options',
+    }
+  )
 
   return (
     <div class={s.JoinForm}>
@@ -48,8 +64,36 @@ export const JoinGame: Component<Props> = props => {
       <div class={s.Or}>
         <span>OR</span>
       </div>
-      <form onSubmit={createGame}>
+      <form onSubmit={ev => createGame(ev, settings)}>
         <Button yellow submit label="Create new game" />
+        <div style="margin-top: 20px; padding: 20px; background-color: black; border-radius: 8px;">
+          <Checkbox
+            label="Communists"
+            value={settings.communists}
+            onChange={communists => setSettings({ communists, anarchist: settings.anarchist && communists })}
+          />
+          <Checkbox
+            label="Monarchist"
+            value={settings.monarchist}
+            onChange={monarchist => setSettings({ monarchist })}
+          />
+          <Checkbox
+            label="Anarchist"
+            value={settings.anarchist}
+            onChange={anarchist => setSettings({ anarchist, communists: settings.communists || anarchist })}
+            // disabled={!settings.communists}
+          />
+          <Checkbox
+            label="Capitalist"
+            value={settings.capitalist}
+            onChange={capitalist => setSettings({ capitalist })}
+          />
+          <Checkbox
+            label="Centrists"
+            value={settings.centrists}
+            onChange={centrists => setSettings({ centrists })}
+          />
+        </div>
       </form>
     </div>
   )
