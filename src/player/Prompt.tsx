@@ -1,4 +1,4 @@
-import { Component, Match, Show, Switch } from 'solid-js'
+import { Component, createEffect, Match, onCleanup, Show, Switch } from 'solid-js'
 import { PlayerAction } from '../dm/action'
 import { ChoosePlayerPrompt, PlayerPrompt } from '../dm/player-prompt'
 import { Party, Role } from '../dm/role'
@@ -6,6 +6,7 @@ import { PublicPlayer } from '../dm/state'
 import { Button } from './Button'
 import { CardSelector, Investigate, PolicyPeak } from './CardSelector'
 import { NightRound } from './NightRound'
+import { chooseIndex, chooseRandom } from '../util/random'
 import s from './PlayerApp.module.css'
 
 interface Props {
@@ -18,6 +19,30 @@ interface Props {
 }
 
 export const Prompt: Component<Props> = props => {
+  if (import.meta.env.VITE_AUTOPLAY) {
+    createEffect(() => {
+      const { prompt, action } = props
+      const timer = setTimeout(() => {
+        switch (prompt.type) {
+          case 'Night':
+            return action({ type: 'EndNightRound' })
+          case 'StartElection':
+            return action({ type: 'EndCardReveal' })
+          case 'ChoosePlayer':
+            return action({ type: 'ChoosePlayer', name: chooseRandom(prompt.options) })
+          case 'Vote':
+            return action({ type: 'CastVote', vote: chooseRandom([true, false]) })
+          case 'PresidentDiscard':
+          case 'ChancellorDiscard':
+            return action({ type: 'Discard', index: chooseIndex(prompt.cards.length) })
+          case 'PolicyPeak':
+            return action({ type: 'EndExecutiveAction' })
+        }
+      }, 500)
+      onCleanup(() => clearTimeout(timer))
+    })
+  }
+
   return (
     <Switch fallback={<pre>{JSON.stringify(props, undefined, 2)}</pre>}>
       <Match when={props.prompt.type === 'Night'}>

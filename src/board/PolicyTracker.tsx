@@ -1,4 +1,4 @@
-import { Motion } from '@motionone/solid'
+import { Motion } from 'solid-motionone'
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js'
 import { Party } from '../dm/role'
 import { useSound } from '../util/hooks'
@@ -57,6 +57,7 @@ export const PolicyCard: Component<PolicyCardProps> = props => {
 
 type CardRevealProps = PolicyCardProps & {
   chaos: boolean
+  canEnd: boolean
   onDone: () => void
 }
 
@@ -64,15 +65,22 @@ export const CardReveal: Component<CardRevealProps> = props => {
   const [step, setStep] = createSignal(0)
 
   createEffect(() => {
-    setTimeout(() => setStep(1), 300)
-    setTimeout(() => setStep(2), 2700)
-    setTimeout(() => setStep(3), 4300)
+    const timeout1 = setTimeout(() => setStep(1), 300)
+    const timeout2 = setTimeout(() => setStep(2), 2700)
+    const timeout3 = setTimeout(() => setStep(3), 4300)
+
+    onCleanup(() => {
+      clearTimeout(timeout1)
+      clearTimeout(timeout2)
+      clearTimeout(timeout3)
+    })
   })
 
   createEffect(() => {
     if (step() < 3) return
-    const int = setInterval(props.onDone, 2000)
-    onCleanup(() => clearInterval(int))
+    if (!props.canEnd) return
+    const timeout = setTimeout(props.onDone, 2000)
+    onCleanup(() => clearTimeout(timeout))
   })
 
   const chaos = () => props.chaos && step() < 2

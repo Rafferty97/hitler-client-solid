@@ -1,5 +1,5 @@
 import { Component, JSX } from 'solid-js'
-import { Motion } from '@motionone/solid'
+import { Motion } from 'solid-motionone'
 import s from './modals.module.css'
 
 export const Scene: Component<{ children: JSX.Element; class?: string }> = props => (

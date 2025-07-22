@@ -1,5 +1,4 @@
 import { Component, createSignal } from 'solid-js'
-import { Motion, Presence } from '@motionone/solid'
 import { validateGameIdAndName } from '../validate'
 import { Button } from './Button'
 import s from './JoinGame.module.css'

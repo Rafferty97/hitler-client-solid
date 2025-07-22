@@ -1,5 +1,5 @@
 import { Component, createSignal, Index, Switch, Match, Show } from 'solid-js'
-import { Motion } from '@motionone/solid'
+import { Motion } from 'solid-motionone'
 import { Party } from '../dm/role'
 import { Button } from './Button'
 import ps from './PlayerApp.module.css'

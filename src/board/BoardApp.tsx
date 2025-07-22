@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal, Match, Show, Switch, untrack } from 'solid-js'
+import { Component, createEffect, createSignal, Match, Switch, untrack } from 'solid-js'
 import { LiveHeader } from '../components/LiveHeader'
 import { GameState } from '../dm/state'
 import { validateGameId } from '../validate'

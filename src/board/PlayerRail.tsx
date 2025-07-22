@@ -1,4 +1,4 @@
-import { Motion } from '@motionone/solid'
+import { Motion } from 'solid-motionone'
 import { Component, Index, Show } from 'solid-js'
 import { BoardState, GameState } from '../dm/state'
 import { filterSignal, usePersist } from '../util/hooks'

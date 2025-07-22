@@ -1,4 +1,4 @@
-import { Motion } from '@motionone/solid'
+import { Motion } from 'solid-motionone'
 import { Component, createEffect, createSignal, onCleanup } from 'solid-js'
 import { Role } from '../dm/role'
 import s from './PlayerApp.module.css'

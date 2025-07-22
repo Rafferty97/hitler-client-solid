@@ -1,8 +1,8 @@
-import { Component, createEffect, createMemo, onCleanup, Show } from 'solid-js'
+import { Component, createEffect, createMemo, Match, onCleanup, Switch } from 'solid-js'
 import { Scene } from './Scene'
 import { useDelay, useDynamicSound, useSound } from '../../util/hooks'
 import { PlayerName } from './PlayerName'
-import { Motion, Presence } from '@motionone/solid'
+import { Motion } from 'solid-motionone'
 import { sound } from '../../util/sound'
 import s from './modals.module.css'
 import president from '../../assets/president.png'
@@ -59,28 +59,31 @@ export const Election: Component<Props> = props => {
         </div>
       </div>
       <div class={`${s.VoteNow} ${showVoting() ? '' : s.hidden}`}>Vote now!</div>
-      <VoteResult outcome={outcome()} />
+      <Switch>
+        <Match when={outcome() === true}>
+          <VoteResult outcome={true} />
+        </Match>
+        <Match when={outcome() === false}>
+          <VoteResult outcome={false} />
+        </Match>
+      </Switch>
     </Scene>
   )
 }
 
-const VoteResult: Component<{ outcome?: boolean }> = props => {
+const VoteResult: Component<{ outcome: boolean }> = props => {
   useDynamicSound(() => getVoteSound(props.outcome))
 
   return (
     <div class={s.VoteResult}>
-      <Presence>
-        <Show when={props.outcome != null}>
-          <Motion.div
-            class={props.outcome ? s.ja : s.nein}
-            initial={{ transform: 'rotate(-36deg) scale(6)' }}
-            animate={{ transform: `rotate(${props.outcome ? '-12deg' : '8deg'}) scale(1)` }}
-            transition={{ duration: 0.15 }}
-          >
-            {props.outcome ? 'JA!' : 'NEIN!'}
-          </Motion.div>
-        </Show>
-      </Presence>
+      <Motion.div
+        class={props.outcome ? s.ja : s.nein}
+        initial={{ transform: 'rotate(-36deg) scale(6)' }}
+        animate={{ transform: `rotate(${props.outcome ? '-12deg' : '8deg'}) scale(1)` }}
+        transition={{ duration: 0.15 }}
+      >
+        {props.outcome ? 'JA!' : 'NEIN!'}
+      </Motion.div>
     </div>
   )
 }

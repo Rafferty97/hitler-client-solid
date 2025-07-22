@@ -1,5 +1,5 @@
-import { Presence } from '@motionone/solid'
-import { Component, createEffect, createMemo, createSignal, JSX, Match, Show, Switch } from 'solid-js'
+import { Presence } from 'solid-motionone'
+import { Component, createEffect, createMemo, createSignal, Match, Show, Switch, untrack } from 'solid-js'
 import { GameState } from '../dm/state'
 import { Lobby } from './modals/Lobby'
 import { BoardPrompt } from '../dm/board-prompt'
@@ -53,17 +53,16 @@ export const BoardContent: Component<Props> = props => {
     }
   }
 
-  const numPolicies = (party: Party) => {
-    if (props.state.state.type !== 'board') return 0
-    switch (party) {
-      case 'Liberal':
-        return props.state.state.liberal_cards
-      case 'Fascist':
-        return props.state.state.fascist_cards
-      case 'Communist':
-        return props.state.state.communist_cards ?? 0
+  const numPolicies = createMemo<Record<Party, number>>(() => {
+    if (props.state.state.type !== 'board') {
+      return { Liberal: 0, Fascist: 0, Communist: 0 }
     }
-  }
+    return {
+      Liberal: props.state.state.liberal_cards,
+      Fascist: props.state.state.fascist_cards,
+      Communist: props.state.state.communist_cards ?? 0,
+    }
+  })
 
   const xy = (party: Party, index: number) => {
     const numCards = trackLength(party, numPlayers())
@@ -73,15 +72,24 @@ export const BoardContent: Component<Props> = props => {
     return { party, x, y }
   }
 
+  const cardRevealState = createMemo(
+    () => {
+      if (props.state.state.type !== 'board') return undefined
+      const prompt = props.state.state.prompt
+      if (prompt?.type !== 'CardReveal') return undefined
+      return prompt ?? undefined
+    },
+    undefined,
+    { equals: (a, b) => a?.result == b?.result }
+  )
+
   const cardReveal = () => {
-    if (props.state.state.type !== 'board') return undefined
-    const prompt = props.state.state.prompt
-    if (prompt?.type !== 'CardReveal') return undefined
-    const party = prompt.result
-    if (party == null) return undefined
+    const prompt = cardRevealState()
+    if (!prompt) return undefined
     return {
-      ...xy(party, numPolicies(party)),
+      ...xy(prompt.result, untrack(numPolicies)[prompt.result]),
       chaos: prompt.chaos,
+      canEnd: prompt.can_end,
     }
   }
 
@@ -125,14 +133,16 @@ export const BoardContent: Component<Props> = props => {
             <PolicyTracker party={party} numPlayers={numPlayers()} scale={scale()} />
           ))}
           {parties().map(party =>
-            range(0, numPolicies(party)).map(i => <PolicyCard {...xy(party, i)} scale={scale()} />)
+            range(0, numPolicies()[party]).map(i => <PolicyCard {...xy(party, i)} scale={scale()} />)
           )}
-          <Show when={cardReveal()}>
-            <CardReveal
-              {...cardReveal()!}
-              scale={scale()}
-              onDone={() => props.action({ type: 'EndCardReveal' })}
-            />
+          <Show when={cardReveal()} keyed>
+            {cardRevealProps => (
+              <CardReveal
+                {...cardRevealProps}
+                scale={scale()}
+                onDone={() => props.action({ type: 'EndCardReveal' })}
+              />
+            )}
           </Show>
         </div>
       </Show>

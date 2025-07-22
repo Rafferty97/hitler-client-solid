@@ -1,5 +1,5 @@
 import { Component } from 'solid-js'
-import { Motion } from '@motionone/solid'
+import { Motion } from 'solid-motionone'
 import { spring } from 'motion'
 import { useSound } from '../../util/hooks'
 import { sound } from '../../util/sound'

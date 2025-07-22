@@ -43,10 +43,7 @@ const ConsolePage: Component = () => {
   return (
     <div>
       <PrefetchImages />
-      <div style={{ position: 'relative', background: '#222', height: '650px', margin: '0 0 40px' }}>
-        <BoardApp gameId={gameId()} onJoin={setGameId} />
-      </div>
-      <div style={{ display: 'flex', 'flex-wrap': 'wrap', margin: '40px 0' }}>
+      <div style={{ display: 'flex', 'flex-wrap': 'wrap' }}>
         {players.map(player => (
           <div
             style={{

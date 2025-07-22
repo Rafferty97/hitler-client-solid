@@ -1,4 +1,4 @@
-import { Motion, Presence } from '@motionone/solid'
+import { Motion, Presence } from 'solid-motionone'
 import { Component, For } from 'solid-js'
 import s from './modals.module.css'
 

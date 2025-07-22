@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onCleanup } from 'solid-js'
+import { createEffect, onCleanup } from 'solid-js'
 
 export const Confetti = (props: { color: string }) => {
   let container: HTMLDivElement | undefined

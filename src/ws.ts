@@ -1,4 +1,4 @@
-import { createMemo, createSignal } from 'solid-js'
+import { createSignal, onCleanup } from 'solid-js'
 import { LinearBackoff, Websocket, WebsocketBuilder } from 'websocket-ts'
 import { z } from 'zod'
 import { BoardAction, PlayerAction } from './dm/action'
@@ -30,6 +30,7 @@ type WsState = { game?: GameState; create?: GameOptions }
 export function createWs() {
   const [connected, setConnected] = createSignal(false)
   const [state, setState] = createSignal<WsState>({})
+  let disposed = false
 
   const sendConnectMsg = (ws: Websocket, state: WsState) => {
     if (state.game) {
@@ -50,26 +51,35 @@ export function createWs() {
   const ws = new WebsocketBuilder(import.meta.env.VITE_WS_URL)
     .withBackoff(new LinearBackoff(1000, 250, 2500))
     .onOpen(ws => {
+      if (disposed) return
       setConnected(true)
       sendConnectMsg(ws, state())
     })
     .onMessage((ws, event) => {
+      if (disposed) return
       const msg = serverMsg.safeParse(JSON.parse(event.data))
       if (!msg.success) {
         console.error(`Could not parse message`, JSON.parse(event.data))
         return
       }
-      setState(nextState(state(), msg.data))
+      setState(state => nextState(state, msg.data))
     })
     .onError(() => {
+      if (disposed) return
       setConnected(false)
       setState(s => ({ game: s.game }))
     })
     .onClose(() => {
+      if (disposed) return
       setConnected(false)
       setState(s => ({ game: s.game }))
     })
     .build()
+
+  onCleanup(() => {
+    disposed = true
+    ws.close()
+  })
 
   const join = (cxn: GameCredentials) => {
     sendConnectMsg(ws, setState(connectingState(cxn)))

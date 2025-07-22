@@ -1,4 +1,4 @@
-import { Motion, Presence } from '@motionone/solid'
+import { Motion, Presence } from 'solid-motionone'
 import { Component, createEffect, createSignal, onCleanup, Show } from 'solid-js'
 import s from './Error.module.css'
 
