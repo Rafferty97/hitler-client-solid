@@ -36,6 +36,7 @@ export const Prompt: Component<Props> = props => {
           case 'ChancellorDiscard':
             return action({ type: 'Discard', index: chooseIndex(prompt.cards.length) })
           case 'PolicyPeak':
+          case 'InvestigatePlayer':
             return action({ type: 'EndExecutiveAction' })
         }
       }, 500)
