@@ -33,10 +33,28 @@ const ConsolePage: Component = () => {
   })
 
   const numPlayers = parseInt(params['num'] ?? '5')
-  const players = ['ALEX', 'BOB', 'CHARLIE', 'DAVID', 'EDDY', 'FRED', 'GEORGE', 'IJ', 'JACK', 'KAREN'].slice(
-    0,
-    numPlayers
-  )
+  const players = [
+    'ALEX',
+    'BOB',
+    'CHARLIE',
+    'DAVID',
+    'EDDY',
+    'FRED',
+    'GEORGE',
+    'IVAN',
+    'JACK',
+    'KAREN',
+    'LEO',
+    'MANDY',
+    'NICOLE',
+    'OTTO',
+    'PETER',
+    'RUSTY',
+    'SAM',
+    'TYLER',
+    'UNCLE JOE',
+    'VICKY',
+  ].slice(0, numPlayers)
 
   const noop = () => {}
 
