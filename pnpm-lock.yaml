@@ -14,6 +14,9 @@ importers:
       '@solidjs/router':
         specifier: ^0.13.0
         version: 0.13.6(solid-js@1.9.7)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       motion:
         specifier: ^10.15.3
         version: 10.18.0
@@ -33,6 +36,9 @@ importers:
         specifier: ^3.20.2
         version: 3.25.76
     devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
       typescript:
         specifier: ^5.4.2
         version: 5.8.3
@@ -342,6 +348,9 @@ packages:
   '@types/babel__traverse@7.20.7':
     resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
 
+  '@types/lodash@4.17.20':
+    resolution: {integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==}
+
   babel-plugin-jsx-dom-expressions@0.39.8:
     resolution: {integrity: sha512-/MVOIIjonylDXnrWmG23ZX82m9mtKATsVHB7zYlPfDR9Vdd/NBE48if+wv27bSkBtyO7EPMUlcUc4J63QwuACQ==}
     peerDependencies:
@@ -422,6 +431,9 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
+
+  lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
@@ -846,6 +858,8 @@ snapshots:
     dependencies:
       '@babel/types': 7.28.1
 
+  '@types/lodash@4.17.20': {}
+
   babel-plugin-jsx-dom-expressions@0.39.8(@babel/core@7.28.0):
     dependencies:
       '@babel/core': 7.28.0
@@ -925,6 +939,8 @@ snapshots:
   jsesc@3.1.0: {}
 
   json5@2.2.3: {}
+
+  lodash@4.17.21: {}
 
   lru-cache@5.1.1:
     dependencies:

@@ -1,13 +1,15 @@
-import { Component, createEffect, Match, onCleanup, Show, Switch } from 'solid-js'
+import { Component, createEffect, createMemo, Match, onCleanup, Show, Switch } from 'solid-js'
 import { PlayerAction } from '../dm/action'
 import { ChoosePlayerPrompt, PlayerPrompt } from '../dm/player-prompt'
 import { Party, Role } from '../dm/role'
 import { PublicPlayer } from '../dm/state'
 import { Button } from './Button'
-import { CardSelector, Investigate, PolicyPeak } from './CardSelector'
+import { CardSelector, Investigate, PolicyPeak, Radicalization } from './CardSelector'
 import { NightRound } from './NightRound'
 import { chooseIndex, chooseRandom } from '../util/random'
 import s from './PlayerApp.module.css'
+import { partyForRole } from '../util/party'
+import _ from 'lodash'
 
 interface Props {
   prompt: PlayerPrompt
@@ -44,9 +46,11 @@ export const Prompt: Component<Props> = props => {
     })
   }
 
+  const prompt = createMemo(() => props.prompt, props.prompt, { equals: _.isEqual })
+
   return (
     <Switch fallback={<pre>{JSON.stringify(props, undefined, 2)}</pre>}>
-      <Match when={props.prompt.type === 'Night'}>
+      <Match when={prompt().type === 'Night'}>
         <NightRound
           role={props.role}
           others={props.players}
@@ -54,15 +58,15 @@ export const Prompt: Component<Props> = props => {
         />
       </Match>
 
-      <Match when={props.prompt.type === 'ChoosePlayer' ? props.prompt : undefined} keyed>
-        {prompt => <ChoosePlayer prompt={prompt} action={props.action} />}
+      <Match when={prompt().type === 'ChoosePlayer'}>
+        <ChoosePlayer prompt={prompt() as ChoosePlayerPrompt} action={props.action} />
       </Match>
 
-      <Match when={props.prompt.type === 'Vote'}>
+      <Match when={prompt().type === 'Vote'}>
         <Vote action={props.action} />
       </Match>
 
-      <Match when={isDiscardPrompt(props.prompt)} keyed>
+      <Match when={isDiscardPrompt(prompt())} keyed>
         {prompt => (
           <CardSelector
             policies={prompt.cards}
@@ -73,29 +77,35 @@ export const Prompt: Component<Props> = props => {
         )}
       </Match>
 
-      <Match when={props.prompt.type === 'ApproveVeto'}>
+      <Match when={prompt().type === 'ApproveVeto'}>
         <p class={`${s.Message} ${s.padded}`}>Do you approve the veto?</p>
         <Button label="Approve" white onClick={() => props.action({ type: 'AcceptVeto' })} />
         <Button label="Reject" black onClick={() => props.action({ type: 'RejectVeto' })} />
       </Match>
 
-      <Match when={props.prompt.type === 'PolicyPeak' ? props.prompt : undefined} keyed>
-        {prompt => (
-          <PolicyPeak policies={prompt.cards} onDone={() => props.action({ type: 'EndExecutiveAction' })} />
-        )}
+      <Match when={prompt().type === 'PolicyPeak'}>
+        <PolicyPeak
+          policies={(prompt() as Extract<PlayerPrompt, { type: 'PolicyPeak' }>).cards}
+          onDone={() => props.action({ type: 'EndExecutiveAction' })}
+        />
       </Match>
 
-      <Match when={props.prompt.type === 'InvestigatePlayer' ? props.prompt : undefined} keyed>
-        {prompt => <Investigate {...prompt} onDone={() => props.action({ type: 'EndExecutiveAction' })} />}
+      <Match when={prompt().type === 'InvestigatePlayer'} keyed>
+        <Investigate
+          {...(prompt() as Extract<PlayerPrompt, { type: 'InvestigatePlayer' }>)}
+          onDone={() => props.action({ type: 'EndExecutiveAction' })}
+        />
       </Match>
 
-      <Match when={props.prompt.type === 'Radicalisation'}>
-        {/* FIXME: Needs improvement */}
-        <pre>{JSON.stringify(props.prompt, undefined, 2)}</pre>
-        <Button label="Done" onClick={() => props.action({ type: 'EndExecutiveAction' })} />
+      <Match when={prompt().type === 'Radicalisation'}>
+        <Radicalization
+          {...(prompt() as Extract<PlayerPrompt, { type: 'Radicalisation' }>)}
+          party={partyForRole(props.role)}
+          onDone={() => props.action({ type: 'EndExecutiveAction' })}
+        />
       </Match>
 
-      <Match when={props.prompt.type === 'EndCongress'}>
+      <Match when={prompt().type === 'EndCongress'}>
         <p class={`${s.Message} ${s.padded}`}>
           <strong>Congress</strong>
           <br />
@@ -107,24 +117,28 @@ export const Prompt: Component<Props> = props => {
         <Button yellow label="Done" onClick={() => props.action({ type: 'EndCongress' })} />
       </Match>
 
-      <Match when={props.prompt.type === 'StartElection'}>
+      <Match when={prompt().type === 'StartElection'}>
         <p class={`${s.Message} ${s.padded}`}>Ready to continue?</p>
         <Button label="Yes" onClick={() => props.action({ type: 'EndCardReveal' })} />
         {/* FIXME: Assassination */}
       </Match>
 
-      <Match when={props.prompt.type === 'HijackElection'}>
+      <Match when={prompt().type === 'HijackElection'}>
         {/* FIXME: Needs improvement */}
         <h4>Hijack election?</h4>
         <button onClick={() => props.action({ type: 'HijackElection' })}>HIJACK</button>
       </Match>
 
-      <Match when={props.prompt.type === 'Dead'}>
+      <Match when={prompt().type === 'Dead'}>
         <p class={`${s.Message} ${s.padded} ${s.dead}`}>You are dead</p>
       </Match>
 
-      <Match when={props.prompt.type === 'GameOver' ? props.prompt : undefined} keyed>
-        {({ won }) => <Gameover won={won} onRestart={props.startGame} onEnd={props.endGame} />}
+      <Match when={prompt().type === 'GameOver'}>
+        <Gameover
+          won={(prompt() as Extract<PlayerPrompt, { type: 'GameOver' }>).won}
+          onRestart={props.startGame}
+          onEnd={props.endGame}
+        />
       </Match>
     </Switch>
   )

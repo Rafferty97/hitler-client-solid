@@ -1,9 +1,10 @@
-import { Component, createSignal, Index, Switch, Match, Show } from 'solid-js'
+import { Component, createSignal, Index, Switch, Match, Show, createEffect, createMemo } from 'solid-js'
 import { Motion } from 'solid-motionone'
 import { Party } from '../dm/role'
 import { Button } from './Button'
 import ps from './PlayerApp.module.css'
 import s from './CardSelector.module.css'
+import { RedCross } from '../components/RedCross'
 
 interface CardSelectorProps {
   policies: Party[]
@@ -129,6 +130,98 @@ export const Investigate: Component<InvestigateProps> = props => {
             </Match>
             <Match when={!revealed()}>
               <Button red noPadding label="View" onClick={() => setRevealed(true)} />
+            </Match>
+          </Switch>
+        </div>
+      </div>
+    </>
+  )
+}
+
+interface RadicalizationProps {
+  name: string
+  result: 'NoAttempt' | 'Fail' | 'Success' | 'Unchanged' | 'Radicalised'
+  party: Party
+  onDone: () => void
+}
+
+export const Radicalization: Component<RadicalizationProps> = props => {
+  const [revealed, setRevealed] = createSignal(false)
+
+  const name = createMemo(() => props.name)
+  const result = createMemo(() => props.result)
+  const party = createMemo(() => props.party)
+
+  return (
+    <>
+      <Show when={revealed()}>
+        <p class={`${ps.Message} ${ps.large} ${ps.fixedHeight}`}>
+          <Switch>
+            <Match when={props.result === 'Fail'}>
+              Your attempt to radicalise <strong>{name()}</strong> has <strong>failed</strong>
+            </Match>
+            <Match when={props.result === 'Success'}>
+              Success! <strong>{name()}</strong> is now a <strong>communist</strong>
+            </Match>
+            <Match when={props.result === 'Unchanged'}>You are still a {props.party}</Match>
+            <Match when={props.result === 'Radicalised'}>
+              You have been <strong>radicalised</strong>
+            </Match>
+          </Switch>
+        </p>
+      </Show>
+      <Show when={!revealed()}>
+        <p class={`${ps.Message} ${ps.fixedHeight}`}>
+          <Switch>
+            <Match when={props.result === 'Success' || props.result === 'Fail'}>
+              Has <strong>{name()}</strong> been successfully radicalised?
+            </Match>
+            <Match when={props.result === 'Unchanged' || props.result === 'Radicalised'}>
+              <p class={`${ps.Message} ${ps.fixedHeight}`}>Have you been radicalised?</p>
+            </Match>
+          </Switch>
+        </p>
+      </Show>
+      <div class={s.QuestionMark}>?</div>
+      <div class={s.CardSelector}>
+        <Motion.div
+          class={`${s.PartyCard} ${s[party()]} ${result() === 'Fail' ? s.Gray : ''}`}
+          animate={{
+            transform: `translate(0, ${revealed() ? 0 : 160}px)`,
+            opacity: revealed() ? 1 : 0,
+          }}
+          initial={{
+            transform: `translate(0, 160px)`,
+            opacity: 0,
+          }}
+          transition={{ duration: 0.35 }}
+        >
+          <Show when={revealed() && props.result === 'Fail'}>
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: '-50px',
+                right: '-50px',
+                bottom: 0,
+                display: 'flex',
+                'align-items': 'center',
+                'justify-content': 'center',
+              }}
+            >
+              <RedCross />
+            </div>
+          </Show>
+        </Motion.div>
+      </div>
+      <div class={s.Buttons}>
+        <div class={s.CentreButton}>
+          <Switch>
+            <Match when={revealed()}>
+              <Button yellow noPadding label="Done" onClick={props.onDone} />
+            </Match>
+            <Match when={!revealed()}>
+              <Button red noPadding label="Check" onClick={() => setRevealed(true)} />
             </Match>
           </Switch>
         </div>

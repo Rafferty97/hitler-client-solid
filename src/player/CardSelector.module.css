@@ -50,6 +50,10 @@
   background-image: url(../assets/communist_party.png);
 }
 
+.PartyCard.Communist.Gray {
+  background-image: url(../assets/communist_party_gray.png);
+}
+
 .PartyCard.Liberal {
   background-image: url(../assets/liberal_party.png);
 }
