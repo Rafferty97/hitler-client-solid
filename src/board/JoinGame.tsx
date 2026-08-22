@@ -27,7 +27,8 @@ export const JoinGame: Component<Props> = props => {
 
   const createGame = (ev: Event, opts?: GameOptions) => {
     ev.preventDefault()
-    props.createGame(opts)
+    // props.createGame(opts)
+    props.createGame()
   }
 
   const [settings, setSettings] = makePersisted(
@@ -41,7 +42,7 @@ export const JoinGame: Component<Props> = props => {
     {
       storage: localStorage,
       name: 'xl_options',
-    }
+    },
   )
 
   return (
@@ -66,7 +67,7 @@ export const JoinGame: Component<Props> = props => {
       </div>
       <form onSubmit={ev => createGame(ev, settings)}>
         <Button yellow submit label="Create new game" />
-        <div style="margin-top: 20px; padding: 20px; background-color: black; border-radius: 8px;">
+        {/*<div style="margin-top: 20px; padding: 20px; background-color: black; border-radius: 8px;">
           <Checkbox
             label="Communists"
             value={settings.communists}
@@ -93,7 +94,7 @@ export const JoinGame: Component<Props> = props => {
             value={settings.centrists}
             onChange={centrists => setSettings({ centrists })}
           />
-        </div>
+        </div>*/}
       </form>
     </div>
   )
